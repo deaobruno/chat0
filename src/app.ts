@@ -1,10 +1,17 @@
-import { createServer, STATUS_CODES } from 'node:http'
+import { createServer } from 'node:http'
 import path from 'node:path'
 import { randomUUID } from 'node:crypto'
 import express, { NextFunction, Request, Response, json, urlencoded } from 'express'
 import { Server } from 'socket.io'
 import ejs from 'ejs'
 import { hash, compare } from 'bcrypt'
+import BadRequestError from './errors/BadRequestError'
+import UnauthorizedError from './errors/UnauthorizedError'
+import ForbiddenError from './errors/ForbiddenError'
+import NotFoundError from './errors/NotFoundError'
+import ConflictError from './errors/ConflictError'
+import BaseError from './errors/BaseError'
+import InternalServerError from './errors/InternalServerError'
 
 type User = {
   password: string
@@ -33,29 +40,9 @@ app.get('/', (req: Request, res: Response) => res.render('home.html'))
 app.post('/register', async (req: Request, res: Response, next: NextFunction) => {
   const { username, password } = req.body
 
-  if (!username) {
-    const error = new Error('Missing "username"')
-
-    error['statusCode'] = 400
-
-    return next(error)
-  }
-
-  if (!password) {
-    const error = new Error('Missing "password"')
-
-    error['statusCode'] = 400
-
-    return next(error)
-  }
-
-  if (users[username]) {
-    const error = new Error('"username" already in use')
-
-    error['statusCode'] = 409
-
-    return next(error)
-  }
+  if (!username) return next(new BadRequestError('Missing "username"'))
+  if (!password) return next(new BadRequestError('Missing "password"'))
+  if (users[username]) return next(new ConflictError('"username" already in use'))
 
   const hashedPassword = await hash(password, 10)
 
@@ -66,47 +53,14 @@ app.post('/register', async (req: Request, res: Response, next: NextFunction) =>
 app.post('/login', async (req: Request, res: Response, next: NextFunction) => {
   const { username, password } = req.body
 
-  if (!username) {
-    const error = new Error('Missing "username"')
-
-    error['statusCode'] = 400
-
-    return next(error)
-  }
-
-  if (!password) {
-    const error = new Error('Missing "password"')
-
-    error['statusCode'] = 400
-
-    return next(error)
-  }
+  if (!username) return next(new BadRequestError('Missing "username"'))
+  if (!password) return next(new BadRequestError('Missing "password"'))
 
   const user = users[username]
 
-  if (!user) {
-    const error = new Error('User not found')
-
-    error['statusCode'] = 404
-
-    return next(error)
-  }
-
-  if (!await compare(password, user.password)) {
-    const error = new Error()
-
-    error['statusCode'] = 401
-
-    return next(error)
-  }
-
-  if (user.logged) {
-    const error = new Error('User already logged')
-
-    error['statusCode'] = 401
-
-    return next(error)
-  }
+  if (!user) return next(new NotFoundError('User not found'))
+  if (!await compare(password, user.password)) return next(new UnauthorizedError())
+  if (user.logged) return next(new UnauthorizedError('User already logged'))
 
   user.logged = true
 
@@ -117,82 +71,27 @@ app.get('/:code', (req: Request, res: Response, next: NextFunction) => {
   const { u: username, p: password } = req.query
   const uuidRegex = /^[0-9a-f]{8}\b-[0-9a-f]{4}\b-[0-9a-f]{4}\b-[0-9a-f]{4}\b-[0-9a-f]{12}$/i
 
-  if (!code || !uuidRegex.test(code)) {
-    const error = new Error('Invalid "code"')
-
-    error['statusCode'] = 400
-
-    return next(error)
-  }
-
-  if (!username) {
-    const error = new Error('Missing "username"')
-
-    error['statusCode'] = 400
-
-    return next(error)
-  }
-
-  if (!password) {
-    const error = new Error('Missing "password"')
-
-    error['statusCode'] = 400
-
-    return next(error)
-  }
+  if (!code || !uuidRegex.test(code)) return next(new BadRequestError('Invalid "code"'))
+  if (!username) return next(new BadRequestError('Missing "username"'))
+  if (!password) return next(new BadRequestError('Missing "password"'))
 
   const user = users[<string>username]
 
-  if (!user) {
-    const error = new Error('User not found')
-
-    error['statusCode'] = 404
-
-    return next(error)
-  }
-
-  if (user.password !== password) {
-    const error = new Error()
-
-    error['statusCode'] = 401
-
-    return next(error)
-  }
-
-  if (!user.logged) {
-    const error = new Error('User not logged')
-
-    error['statusCode'] = 403
-
-    return next(error)
-  }
-
+  if (!user) return next(new NotFoundError('User not found'))
+  if (user.password !== password) return next(new UnauthorizedError())
+  if (!user.logged) return next(new ForbiddenError('User not logged'))
   if (!rooms[code]) rooms[code] = { messages: [], users: {} }
-
-  if (rooms[code].users[<string>username]) {
-    const error = new Error('User is already in room')
-
-    error['statusCode'] = 403
-
-    return next(error)
-  }
+  if (rooms[code].users[<string>username]) return next(new ForbiddenError('User is already in room'))
 
   rooms[code].users[<string>username] = user
 
   res.render('chat.html', { username })
 })
-app.use((req: Request, res: Response, next: NextFunction) => {
-  const error = new Error('Invalid URL')
-
-  error['statusCode'] = 404
-
-  next(error)
-})
-app.use((error: Error & { statusCode: number }, req: Request, res: Response, next: NextFunction) => {
+app.use((req: Request, res: Response, next: NextFunction) => next(new NotFoundError('Invalid URL')))
+app.use((error: BaseError, req: Request, res: Response, next: NextFunction): void => {
   let { statusCode, message } = error
 
-  if (!statusCode) statusCode = 500
-  if (!message) message = STATUS_CODES[statusCode] ?? 'Internal Server Error'
+  if (!statusCode) error = new InternalServerError(message)
 
   console.log(error)
 
