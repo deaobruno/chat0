@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat0 - Home</title>
+  <script src="https://code.jquery.com/jquery-3.7.1.slim.min.js" integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script>
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js" integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="home.css">
+</head>
+<body>
+  <form id="register" method="post" action="http://localhost:8081/register">
+    <input id="register_username" name="username" type="text" placeholder="Type your username">
+    <input id="register_password" name="password" type="text" placeholder="Type your password">
+    <button id="submit" type="submit">Register</button>
+  </form>
+  <form id="login" method="post" action="http://localhost:8081/login">
+    <input id="login_username" name="username" type="text" placeholder="Type your username">
+    <input id="login_password" name="password" type="text" placeholder="Type your password">
+    <button id="submit" type="submit">Login</button>
+  </form>
+  <script type="text/javascript" src="home.js"></script>
+</body>
+</html>

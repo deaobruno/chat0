@@ -8,7 +8,7 @@ html, body {
   box-sizing: border-box;
 }
 
-#chat {
+form {
   height: 100%;
   display: flex;
   justify-content: center;
@@ -24,22 +24,18 @@ input {
   font-size: 14px;
 }
 
-button {
-  width: 600px;
+#register_password, #login_password {
+  margin-top: 10px;
+}
+
+#submit {
+  width: 100px;
   height: 50px;
   font-size: 14px;
   background: #069;
   text-align: center;
   line-height: 50px;
-  font-weight: bold;
   color: #FFF;
   margin-top: 10px;
-}
-
-#messages {
-  width: 600px;
-  height: 400px;
-  margin: 20px 0;
-  border: 1px solid #ddd;
-  padding: 20px;
+  cursor: pointer;
 }

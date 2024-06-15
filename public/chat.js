@@ -3,19 +3,21 @@ const socket = io('http://localhost:8081')
 $('#chat').submit(event => {
   event.preventDefault()
 
-  const author = $('#username').val()
+  const author = $('#username').attr("placeholder")
   const text = $('#text').val()
 
-  if (author.length && text.length) {
-    const message = {
-      author,
-      text,
-    }
+  if (!author.length) return alert('author is missing')
+  if (!text.length) return alert('message is empty')
 
-    renderMessage(message)
-
-    socket.emit('newMessage', message)
+  const message = {
+    author,
+    text,
   }
+
+  renderMessage(message)
+  $('#text').val('')
+
+  socket.emit('newMessage', message)
 })
 
 socket
