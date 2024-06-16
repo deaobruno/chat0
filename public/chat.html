@@ -9,6 +9,10 @@
   <link rel="stylesheet" href="chat.css">
 </head>
 <body>
+  <form id="logout" method="post" action="http://localhost:8081/logout">
+    <input name="username" type="hidden" value="<%= username %>">
+    <button id="logout_submit" type="submit">Logout</button>
+  </form>
   <form id="chat">
     <input id="username" type="text" placeholder="<%= username %>" disabled>
     <div id="messages"></div>

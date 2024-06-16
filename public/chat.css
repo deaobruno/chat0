@@ -46,6 +46,19 @@ input {
   cursor: pointer;
 }
 
+#logout_submit {
+  width: 50px;
+  height: 50px;
+  font-size: 14px;
+  background: #069;
+  text-align: center;
+  line-height: 50px;
+  color: #FFF;
+  margin-top: 10px;
+  margin-left: 725px;
+  cursor: pointer;
+}
+
 #messages {
   width: 600px;
   height: 400px;

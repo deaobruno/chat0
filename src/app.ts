@@ -1,6 +1,7 @@
 import { createServer } from 'node:http'
-import path from 'node:path'
+import { join } from 'node:path'
 import { randomUUID } from 'node:crypto'
+import { URL, URLSearchParams } from 'node:url'
 import express, { NextFunction, Request, Response, json, urlencoded } from 'express'
 import { Server } from 'socket.io'
 import ejs from 'ejs'
@@ -16,6 +17,7 @@ import InternalServerError from './errors/InternalServerError'
 type User = {
   password: string
   logged: boolean
+  rooms: string[]
 }
 
 type Message = {
@@ -26,7 +28,7 @@ type Message = {
 const app = express()
 const server = createServer(app)
 const io = new Server(server)
-const publicDir = path.join(__dirname, '..', 'public')
+const publicDir = join(__dirname, '..', 'public')
 const users: { [username: string]: User } = {}
 const rooms: { [code: string]: { messages: Message[], users: { [username: string]: User } } } = {}
 
@@ -45,10 +47,11 @@ app.post('/register', async (req: Request, res: Response, next: NextFunction) =>
   if (users[username]) return next(new ConflictError('"username" already in use'))
 
   const hashedPassword = await hash(password, 10)
+  const roomId = randomUUID()
 
-  users[username] = { password: hashedPassword, logged: true }
+  users[username] = { password: hashedPassword, logged: true, rooms: [roomId] }
 
-  res.redirect(`/${randomUUID()}?u=${username}&p=${hashedPassword}`)
+  res.redirect(`/${roomId}?u=${username}&p=${hashedPassword}`)
 })
 app.post('/login', async (req: Request, res: Response, next: NextFunction) => {
   const { username, password } = req.body
@@ -62,9 +65,28 @@ app.post('/login', async (req: Request, res: Response, next: NextFunction) => {
   if (!await compare(password, user.password)) return next(new UnauthorizedError())
   if (user.logged) return next(new UnauthorizedError('User already logged'))
 
+  const roomId = randomUUID()
+
+  user.rooms.push(roomId)
   user.logged = true
 
-  res.redirect(`/${randomUUID()}?u=${username}&p=${user.password}`)
+  res.redirect(`/${roomId}?u=${username}&p=${user.password}`)
+})
+app.post('/logout', async (req: Request, res: Response, next: NextFunction) => {
+  const { username } = req.body
+
+  if (!username) return next(new BadRequestError('Missing "username"'))
+
+  const user = users[username]
+
+  if (!user) return next(new NotFoundError('User not found'))
+  if (!user.logged) return next(new UnauthorizedError('User not logged'))
+
+  user.rooms.forEach(room => delete rooms[room].users[username])
+  user.rooms = []
+  user.logged = false
+
+  res.redirect('/')
 })
 app.get('/:code', (req: Request, res: Response, next: NextFunction) => {
   const { code } = req.params
@@ -81,7 +103,6 @@ app.get('/:code', (req: Request, res: Response, next: NextFunction) => {
   if (user.password !== password) return next(new UnauthorizedError())
   if (!user.logged) return next(new ForbiddenError('User not logged'))
   if (!rooms[code]) rooms[code] = { messages: [], users: {} }
-  if (rooms[code].users[<string>username]) return next(new ForbiddenError('User is already in room'))
 
   rooms[code].users[<string>username] = user
 
@@ -102,19 +123,25 @@ app.use((error: BaseError, req: Request, res: Response, next: NextFunction): voi
 
 io.on('connection', socket => {
   const code = socket.handshake.headers.referer?.split('/')[3].split('?')[0]
-
-  console.log(`socket connected ${socket.id} ${code}`)
+  const url = new URL(<string>socket.handshake.headers.referer)
+  const username = new URLSearchParams(url.search).get('u')
 
   if (!code) return console.log('code is empty')
 
+  const room = rooms[code]
+
+  if (!room) return console.log(`room does not exist: ${code}`)
+  if (username && !room.users[username]) return console.log(`user is not in room: ${code} ${username}`)
+
+  console.log(`socket: ${socket.id} / code: ${code} / username: ${username}`)
+
   socket.join(code)
 
-  if (rooms[code]) socket.emit('previousMessages', rooms[code].messages)
+  if (room) socket.emit('previousMessages', room.messages)
 
   socket
     .on('newMessage', (message: Message) => {
-      rooms[code].messages.push(message)
-
+      room.messages.push(message)
       socket.to(code).emit('receivedMessage', message)
     })
 })
