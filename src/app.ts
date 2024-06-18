@@ -3,6 +3,7 @@ import { join } from 'node:path'
 import { randomUUID } from 'node:crypto'
 import { URL, URLSearchParams } from 'node:url'
 import express, { NextFunction, Request, Response, json, urlencoded } from 'express'
+import favicon from 'serve-favicon'
 import { Server } from 'socket.io'
 import ejs from 'ejs'
 import { hash, compare } from 'bcrypt'
@@ -35,6 +36,7 @@ const rooms: { [code: string]: { messages: Message[], users: { [username: string
 app.use(json())
 app.use(urlencoded({ extended: false }))
 app.use(express.static(publicDir))
+app.use(favicon(join(publicDir, 'favicon.ico')))
 app.set('views', publicDir)
 app.engine('html', ejs.renderFile)
 app.set('view engine', 'html')
@@ -94,21 +96,21 @@ app.get('/:code', (req: Request, res: Response, next: NextFunction) => {
   const uuidRegex = /^[0-9a-f]{8}\b-[0-9a-f]{4}\b-[0-9a-f]{4}\b-[0-9a-f]{4}\b-[0-9a-f]{12}$/i
 
   if (!code || !uuidRegex.test(code)) return next(new BadRequestError('Invalid "code"'))
-  if (!username) return next(new BadRequestError('Missing "username"'))
-  if (!password) return next(new BadRequestError('Missing "password"'))
+  if (!username || typeof username !== 'string') return next(new BadRequestError('Invalid "username"'))
+  if (!password || typeof password !== 'string') return next(new BadRequestError('Invalid "password"'))
 
-  const user = users[<string>username]
+  const user = users[username]
 
   if (!user) return next(new NotFoundError('User not found'))
   if (user.password !== password) return next(new UnauthorizedError())
   if (!user.logged) return next(new ForbiddenError('User not logged'))
   if (!rooms[code]) rooms[code] = { messages: [], users: {} }
 
-  rooms[code].users[<string>username] = user
+  rooms[code].users[username] = user
 
   res.render('chat.html', { username })
 })
-app.use((req: Request, res: Response, next: NextFunction) => next(new NotFoundError('Invalid URL')))
+app.use((req: Request, res: Response, next: NextFunction) => res.status(404).render('not-found.html'))
 app.use((error: BaseError, req: Request, res: Response, next: NextFunction): void => {
   let { statusCode, message } = error
 
@@ -118,19 +120,25 @@ app.use((error: BaseError, req: Request, res: Response, next: NextFunction): voi
 
   res
     .status(statusCode)
-    .send(message)
+    .render('error.html')
 })
 
 io.on('connection', socket => {
-  const code = socket.handshake.headers.referer?.split('/')[3].split('?')[0]
-  const url = new URL(<string>socket.handshake.headers.referer)
-  const username = new URLSearchParams(url.search).get('u')
+  const { referer } = socket.handshake.headers
+
+  if (!referer) return console.log('referer is empty')
+
+  const code = referer.split('/')[3].split('?')[0]
 
   if (!code) return console.log('code is empty')
 
   const room = rooms[code]
 
   if (!room) return console.log(`room does not exist: ${code}`)
+
+  const url = new URL(referer)
+  const username = new URLSearchParams(url.search).get('u')
+
   if (username && !room.users[username]) return console.log(`user is not in room: ${code} ${username}`)
 
   console.log(`socket: ${socket.id} / code: ${code} / username: ${username}`)
