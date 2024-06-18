@@ -1,6 +1,6 @@
 const socket = io('http://localhost:8081')
 
-$('#chat').submit(event => {
+$('#room').submit(event => {
   event.preventDefault()
 
   const author = $('#username').attr("placeholder")

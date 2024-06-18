@@ -27,5 +27,5 @@ export default (userRepo: IUserRepo, roomRepo: IRoomRepo) => async (req: Request
 
   room.users[user.user_id] = user
 
-  res.render('chat.html', { username })
+  res.render('room.html', { username })
 }
