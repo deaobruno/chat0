@@ -1,11 +1,12 @@
 $('#register').submit(event => {
+  const email = $('#register_email').val()
   const username = $('#register_username').val()
   const password = $('#register_password').val()
   
-  if (!username || !password) {
+  if (!email || !username || !password) {
     event.preventDefault()
     
-    return alert('username and password are needed')
+    return alert('email, username and password are needed')
   }
 })
 
