@@ -1,5 +1,8 @@
+import IRoomRepo from './IRoomRepo'
+import IUserRoomRepo from './IUserRoomRepo'
+
 type User = {
-  user_id: string
+  _id: string
   email: string
   username: string
   password: string
@@ -12,18 +15,18 @@ type Message = {
 }
 
 type Room = {
-  room_id: string
+  _id: string
   title: string
   users: { [user_id: string]: User }
   messages: Message[]
 }
 
-export default () => {
+export default (userRoomRepo: IUserRoomRepo): IRoomRepo => {
   const create = async (data: Room): Promise<void> => {}
   const find = async (filters?: unknown): Promise<Room[]> => {
     return []
   }
-  const findByUserId = async (filters?: unknown): Promise<Room[]> => {
+  const findByUserId = async (user_id: string): Promise<Room[]> => {
     return []
   }
   const findOne = async (filters?: unknown): Promise<Room | null> => {

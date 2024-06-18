@@ -14,6 +14,8 @@ import logoutHandler from './handlers/auth/logoutHandler'
 import UserRepo from './repositories/UserRepo'
 import RoomRepo from './repositories/RoomRepo'
 import getRoomByIdHandler from './handlers/room/getRoomByIdHandler'
+import UserRoomRepo from './repositories/UserRoomRepo'
+import getRoomsByUserIdHandler from './handlers/room/getRoomsByUserIdHandler'
 
 type Message = {
   author: string
@@ -24,8 +26,9 @@ const app = express()
 const server = createServer(app)
 const io = new Server(server)
 const publicDir = join(__dirname, '..', 'public')
-const userRepo = UserRepo()
-const roomRepo = RoomRepo()
+const userRoomRepo = UserRoomRepo()
+const userRepo = UserRepo(userRoomRepo)
+const roomRepo = RoomRepo(userRoomRepo)
 
 app.use(json())
 app.use(urlencoded({ extended: false }))
@@ -39,6 +42,7 @@ app.post('/register', registerHandler(userRepo))
 app.post('/login', loginHandler(userRepo))
 app.post('/logout', logoutHandler(userRepo, roomRepo))
 app.get('/rooms/:room_id', getRoomByIdHandler(userRepo, roomRepo))
+app.get('/users/:user_id/rooms', getRoomsByUserIdHandler(userRepo, roomRepo))
 app.use(notFoundHandler)
 app.use(errorHandler)
 

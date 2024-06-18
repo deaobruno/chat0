@@ -16,7 +16,7 @@ export default (userRepo: IUserRepo) => async (req: Request, res: Response, next
   if (!await compare(password, user.password)) return next(new UnauthorizedError())
   if (user.logged) return next(new UnauthorizedError('User already logged'))
 
-  const { user_id } = user
+  const { _id: user_id } = user
 
   user.logged = true
 

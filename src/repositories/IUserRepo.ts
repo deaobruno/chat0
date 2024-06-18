@@ -1,5 +1,5 @@
 type User = {
-  user_id: string
+  _id: string
   email: string
   username: string
   password: string
@@ -9,6 +9,7 @@ type User = {
 export default interface IUserRepo {
   create: (data: User) => Promise<void>
   find: (filters?: unknown) => Promise<User[]>
+  findByRoomId: (room_id: string) => Promise<User[]>
   findOne: (filters?: unknown) => Promise<User | null>
   findOneById: (id: string) => Promise<User | null>
   findOneByEmail: (email: string) => Promise<User | null>

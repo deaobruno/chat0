@@ -1,14 +1,20 @@
+import IUserRepo from './IUserRepo'
+import IUserRoomRepo from './IUserRoomRepo'
+
 type User = {
-  user_id: string
+  _id: string
   email: string
   username: string
   password: string
   logged: boolean
 }
 
-export default () => {
+export default (userRoomRepo: IUserRoomRepo): IUserRepo => {
   const create = async (): Promise<void> => {}
   const find = async (): Promise<User[]> => {
+    return []
+  }
+  const findByRoomId = async (room_id: string): Promise<User[]> => {
     return []
   }
   const findOne = async (): Promise<User | null> => {
@@ -31,6 +37,7 @@ export default () => {
   return {
     create,
     find,
+    findByRoomId,
     findOne,
     findOneById,
     findOneByEmail,

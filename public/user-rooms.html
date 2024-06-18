@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat0 - My Rooms</title>
+  <script src="https://code.jquery.com/jquery-3.7.1.slim.min.js" integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script>
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js" integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="user-rooms.css">
+</head>
+<body>
+  <a href="http://localhost:8081/create-room"><button id="new_room">New Room</button></a>
+  <form id="logout" method="post" action="http://localhost:8081/logout">
+    <input name="username" type="hidden" value="<%= username %>">
+    <button id="logout_submit" type="submit">Logout</button>
+  </form>
+  Create a new <a href="http://localhost:8081/create-room">room</a>
+  <script type="text/javascript" src="user-rooms.js"></script>
+</body>
+</html>

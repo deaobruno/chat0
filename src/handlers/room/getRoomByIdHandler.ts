@@ -25,7 +25,7 @@ export default (userRepo: IUserRepo, roomRepo: IRoomRepo) => async (req: Request
 
   if (!room) return next(new NotFoundError('Room not found'))
 
-  room.users[user.user_id] = user
+  room.users[user._id] = user
 
   res.render('room.html', { username })
 }

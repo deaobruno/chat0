@@ -1,5 +1,5 @@
 type User = {
-  user_id: string
+  _id: string
   email: string
   username: string
   password: string
@@ -12,7 +12,7 @@ type Message = {
 }
 
 type Room = {
-  room_id: string
+  _id: string
   title: string
   users: { [user_id: string]: User }
   messages: Message[]

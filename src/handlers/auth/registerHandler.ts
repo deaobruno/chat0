@@ -23,7 +23,7 @@ export default (userRepo: IUserRepo) => async (req: Request, res: Response, next
   const user_id = randomUUID()
 
   await userRepo.create({
-    user_id,
+    _id: user_id,
     email,
     username,
     password: await hash(password, 10),
