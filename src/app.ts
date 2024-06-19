@@ -1,6 +1,6 @@
 import { URL, URLSearchParams } from 'node:url'
 import socketIo from 'socket.io'
-import db from './database/db'
+import Db from './database/Db'
 import UserRepo from './repositories/UserRepo'
 import RoomRepo from './repositories/RoomRepo'
 import UserRoomRepo from './repositories/UserRoomRepo'
@@ -11,9 +11,14 @@ type Message = {
   text: string
 }
 
-const userRepo = UserRepo
-const roomRepo = RoomRepo
-const userRoomRepo = UserRoomRepo
+const db = Db({
+  host: 'localhost',
+  port: 27017,
+  database: 'chat0',
+})
+const userRepo = UserRepo(db)
+const roomRepo = RoomRepo(db)
+const userRoomRepo = UserRoomRepo(db)
 const server = Server({
   userRepo,
   roomRepo,

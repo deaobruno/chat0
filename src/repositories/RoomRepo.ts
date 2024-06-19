@@ -1,7 +1,7 @@
+import { DataSource } from 'typeorm'
 import { Room } from '../entity/Room'
-import db from '../database/db'
 
-export default db
+export default (db: DataSource) => db
   .getRepository(Room)
   .extend({
     findOneByRoomId(roomId: string) {

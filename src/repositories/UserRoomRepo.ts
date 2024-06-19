@@ -1,7 +1,7 @@
+import { DataSource } from 'typeorm'
 import { UserRoom } from '../entity/UserRoom'
-import db from '../database/db'
 
-export default db
+export default (db: DataSource) => db
   .getRepository(UserRoom)
   .extend({
     findByUserId(userId: string) {
