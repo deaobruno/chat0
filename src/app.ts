@@ -1,51 +1,25 @@
-import { createServer } from 'node:http'
-import { join } from 'node:path'
 import { URL, URLSearchParams } from 'node:url'
-import express, { json, urlencoded } from 'express'
-import favicon from 'serve-favicon'
-import { Server } from 'socket.io'
-import ejs from 'ejs'
+import socketIo from 'socket.io'
 import db from './database/db'
 import UserRepo from './repositories/UserRepo'
 import RoomRepo from './repositories/RoomRepo'
 import UserRoomRepo from './repositories/UserRoomRepo'
-import homeHandler from './handlers/web/homeHandler'
-import notFoundHandler from './handlers/web/notFoundHandler'
-import errorHandler from './handlers/web/errorHandler'
-import registerHandler from './handlers/auth/registerHandler'
-import loginHandler from './handlers/auth/loginHandler'
-import logoutHandler from './handlers/auth/logoutHandler'
-import getRoomByIdHandler from './handlers/room/getRoomByIdHandler'
-import getRoomsByUserIdHandler from './handlers/room/getRoomsByUserIdHandler'
+import Server from './http/Server'
 
 type Message = {
   author: string
   text: string
 }
 
-const app = express()
-const server = createServer(app)
-const io = new Server(server)
-const publicDir = join(__dirname, '..', 'public')
-const userRoomRepo = UserRoomRepo
 const userRepo = UserRepo
 const roomRepo = RoomRepo
-
-app.use(json())
-app.use(urlencoded({ extended: false }))
-app.use(express.static(publicDir))
-app.use(favicon(join(publicDir, 'favicon.ico')))
-app.set('views', publicDir)
-app.engine('html', ejs.renderFile)
-app.set('view engine', 'html')
-app.get('/', homeHandler)
-app.post('/register', registerHandler(userRepo))
-app.post('/login', loginHandler(userRepo))
-app.post('/logout', logoutHandler(userRepo, roomRepo))
-app.get('/rooms/:roomId', getRoomByIdHandler(userRepo, roomRepo, userRoomRepo))
-app.get('/users/:userId/rooms', getRoomsByUserIdHandler(userRepo, roomRepo, userRoomRepo))
-app.use(notFoundHandler)
-app.use(errorHandler)
+const userRoomRepo = UserRoomRepo
+const server = Server({
+  userRepo,
+  roomRepo,
+  userRoomRepo,
+})
+const io = new socketIo.Server(server)
 
 io.on('connection', async socket => {
   const { referer } = socket.handshake.headers
