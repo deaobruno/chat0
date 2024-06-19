@@ -14,13 +14,11 @@ export default (userRepo: IUserRepo) => async (req: Request, res: Response, next
 
   if (!user) return next(new UnauthorizedError())
   if (!await compare(password, user.password)) return next(new UnauthorizedError())
-  if (user.logged) return next(new UnauthorizedError('User already logged'))
+  if (user.isLogged) return next(new UnauthorizedError('User already logged'))
 
-  const { _id: user_id } = user
+  const { userId } = user
 
-  user.logged = true
+  await userRepo.update({ userId }, { isLogged: true })
 
-  await userRepo.updateOne(user_id, user)
-
-  res.redirect(`/users/${user_id}/rooms`)
+  res.redirect(`/users/${userId}/rooms`)
 }

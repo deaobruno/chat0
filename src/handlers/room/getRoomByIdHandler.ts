@@ -5,13 +5,13 @@ import NotFoundError from '../../errors/NotFoundError'
 import ForbiddenError from '../../errors/ForbiddenError'
 import IUserRepo from '../../repositories/IUserRepo'
 import IRoomRepo from '../../repositories/IRoomRepo'
+import IUserRoomRepo from '../../repositories/IUserRoomRepo'
 
-export default (userRepo: IUserRepo, roomRepo: IRoomRepo) => async (req: Request, res: Response, next: NextFunction) => {
-  const { room_id } = req.params
+export default (userRepo: IUserRepo, roomRepo: IRoomRepo, userRoomRepo: IUserRoomRepo) => async (req: Request, res: Response, next: NextFunction) => {
+  const { roomId } = req.params
   const { u: username, p: password } = req.query
-  const uuidRegex = /^[0-9a-f]{8}\b-[0-9a-f]{4}\b-[0-9a-f]{4}\b-[0-9a-f]{4}\b-[0-9a-f]{12}$/i
 
-  if (!room_id || !uuidRegex.test(room_id)) return next(new BadRequestError('Invalid "room_id"'))
+  if (!roomId) return next(new BadRequestError('Invalid "roomId"'))
   if (!username || typeof username !== 'string') return next(new BadRequestError('Invalid "username"'))
   if (!password || typeof password !== 'string') return next(new BadRequestError('Invalid "password"'))
 
@@ -19,13 +19,16 @@ export default (userRepo: IUserRepo, roomRepo: IRoomRepo) => async (req: Request
 
   if (!user) return next(new NotFoundError('User not found'))
   if (user.password !== password) return next(new UnauthorizedError())
-  if (!user.logged) return next(new ForbiddenError('User not logged'))
+  if (!user.isLogged) return next(new ForbiddenError('User not logged'))
 
-  const room = await roomRepo.findOneById(room_id)
+  const { userId } = user
+  const room = await roomRepo.findOneByRoomId(roomId)
 
   if (!room) return next(new NotFoundError('Room not found'))
 
-  room.users[user._id] = user
+  const userRoom = await userRoomRepo.findOneByUserIdAndRoomId(user.userId, roomId)
 
-  res.render('room.html', { username })
+  if (!userRoom || !userRoom.isOk) return next(new UnauthorizedError('User is not allowed in room'))
+
+  res.render('room.html', { userId, username })
 }

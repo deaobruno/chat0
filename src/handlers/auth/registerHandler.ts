@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from 'express'
-import { randomUUID } from 'crypto'
 import { hash } from 'bcrypt'
 import IUserRepo from '../../repositories/IUserRepo'
 import BadRequestError from '../../errors/BadRequestError'
 import ConflictError from '../../errors/ConflictError'
+import { randomUUID } from 'crypto'
 
 export default (userRepo: IUserRepo) => async (req: Request, res: Response, next: NextFunction) => {
   const { email, username, password } = req.body
@@ -20,15 +20,15 @@ export default (userRepo: IUserRepo) => async (req: Request, res: Response, next
 
   if (userByUsername) return next(new ConflictError('"username" already in use'))
 
-  const user_id = randomUUID()
+  const userId = randomUUID()
 
-  await userRepo.create({
-    _id: user_id,
+  await userRepo.insert({
+    userId,
     email,
     username,
     password: await hash(password, 10),
-    logged: true
+    isLogged: true
   })
 
-  res.redirect(`/users/${user_id}/rooms`)
+  res.redirect(`/users/${userId}/rooms`)
 }

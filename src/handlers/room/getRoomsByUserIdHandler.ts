@@ -4,19 +4,20 @@ import NotFoundError from '../../errors/NotFoundError'
 import ForbiddenError from '../../errors/ForbiddenError'
 import IUserRepo from '../../repositories/IUserRepo'
 import IRoomRepo from '../../repositories/IRoomRepo'
+import IUserRoomRepo from '../../repositories/IUserRoomRepo'
 
-export default (userRepo: IUserRepo, roomRepo: IRoomRepo) => async (req: Request, res: Response, next: NextFunction) => {
-  const { user_id } = req.params
-  const uuidRegex = /^[0-9a-f]{8}\b-[0-9a-f]{4}\b-[0-9a-f]{4}\b-[0-9a-f]{4}\b-[0-9a-f]{12}$/i
+export default (userRepo: IUserRepo, roomRepo: IRoomRepo, userRoomRepo: IUserRoomRepo) => async (req: Request, res: Response, next: NextFunction) => {
+  const { userId } = req.params
 
-  if (!user_id || !uuidRegex.test(user_id)) return next(new BadRequestError('Invalid "user_id"'))
+  if (!userId) return next(new BadRequestError('Invalid "userId"'))
 
-  const user = await userRepo.findOneById(user_id)
+  const user = await userRepo.findOneByUserId(userId)
 
   if (!user) return next(new NotFoundError('User not found'))
-  if (!user.logged) return next(new ForbiddenError('User not logged'))
+  if (!user.isLogged) return next(new ForbiddenError('User not logged'))
 
-  const rooms = await roomRepo.findByUserId(user_id)
+  const rooms = (await userRoomRepo.findByUserId(userId))
+    .map(async userRoom => await roomRepo.findOneByRoomId(userRoom.roomId))
 
-  res.render('user-rooms.html', { rooms })
+  res.render('user-rooms.html', { userId, rooms })
 }
