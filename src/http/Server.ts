@@ -14,6 +14,7 @@ import loginHandler from '../handlers/auth/loginHandler'
 import logoutHandler from '../handlers/auth/logoutHandler'
 import getRoomByIdHandler from '../handlers/room/getRoomByIdHandler'
 import getRoomsByUserIdHandler from '../handlers/room/getRoomsByUserIdHandler'
+import createRoomHandler from '../handlers/room/createRoomHandler'
 
 type ServerConfig = {
   userRepo: IUserRepo
@@ -38,6 +39,7 @@ export default (config: ServerConfig) => {
   app.post('/register', registerHandler(userRepo))
   app.post('/login', loginHandler(userRepo))
   app.post('/logout', logoutHandler(userRepo, roomRepo))
+  app.get('/create-room', createRoomHandler)
   app.get('/rooms/:roomId', getRoomByIdHandler(userRepo, roomRepo, userRoomRepo))
   app.get('/users/:userId/rooms', getRoomsByUserIdHandler(userRepo, roomRepo, userRoomRepo))
   app.use(notFoundHandler)

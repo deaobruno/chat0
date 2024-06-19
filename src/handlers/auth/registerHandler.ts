@@ -1,9 +1,9 @@
+import { randomUUID } from 'node:crypto'
 import { NextFunction, Request, Response } from 'express'
 import { hash } from 'bcrypt'
 import IUserRepo from '../../repositories/IUserRepo'
 import BadRequestError from '../../errors/BadRequestError'
 import ConflictError from '../../errors/ConflictError'
-import { randomUUID } from 'crypto'
 
 export default (userRepo: IUserRepo) => async (req: Request, res: Response, next: NextFunction) => {
   const { email, username, password } = req.body
