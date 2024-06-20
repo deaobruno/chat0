@@ -20,5 +20,9 @@ export default (userRepo: IUserRepo) => async (req: Request, res: Response, next
 
   await userRepo.update({ userId }, { isLogged: true })
 
-  res.redirect(`/users/${userId}/rooms`)
+  res
+    .status(200)
+    .send({
+      url: `http://localhost:8081/users/${userId}/rooms`,
+    })
 }

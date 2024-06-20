@@ -1,6 +1,8 @@
 const socket = io('http://localhost:8081')
 
-$('#room').submit(event => {
+$('#logout').click(logout)
+
+$('#new_message').submit(event => {
   event.preventDefault()
 
   const author = $('#username').attr("placeholder")
@@ -12,6 +14,7 @@ $('#room').submit(event => {
   const message = {
     author,
     text,
+    time: new Date().toISOString(),
   }
 
   renderMessage(message)
@@ -21,7 +24,7 @@ $('#room').submit(event => {
 })
 
 socket
-  .on('previousMessages', messages => messages.forEach(renderMessage))
+  .on('previousMessages', messages => messages && messages.forEach(renderMessage))
   .on('receivedMessage', renderMessage)
 
 function renderMessage(message) {

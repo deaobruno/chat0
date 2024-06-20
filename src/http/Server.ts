@@ -15,6 +15,8 @@ import logoutHandler from '../handlers/auth/logoutHandler'
 import getRoomByIdHandler from '../handlers/room/getRoomByIdHandler'
 import getRoomsByUserIdHandler from '../handlers/room/getRoomsByUserIdHandler'
 import createRoomHandler from '../handlers/room/createRoomHandler'
+import insertRoomHandler from '../handlers/room/insertRoomHandler'
+import AuthenticationMiddleware from '../middlewares/AuthenticationMiddleware'
 
 type ServerConfig = {
   userRepo: IUserRepo
@@ -26,6 +28,7 @@ export default (config: ServerConfig) => {
   const { userRepo, roomRepo, userRoomRepo } = config
   const app = express()
   const server = createServer(app)
+  const authenticationMiddleware = AuthenticationMiddleware(userRepo)
   const publicDir = join(__dirname, '..', '..', 'public')
 
   app.use(json())
@@ -38,8 +41,9 @@ export default (config: ServerConfig) => {
   app.get('/', homeHandler)
   app.post('/register', registerHandler(userRepo))
   app.post('/login', loginHandler(userRepo))
-  app.post('/logout', logoutHandler(userRepo, roomRepo))
+  app.post('/logout', authenticationMiddleware, logoutHandler(userRepo))
   app.get('/create-room', createRoomHandler)
+  app.post('/rooms', authenticationMiddleware, insertRoomHandler(userRepo, roomRepo, userRoomRepo))
   app.get('/rooms/:roomId', getRoomByIdHandler(userRepo, roomRepo, userRoomRepo))
   app.get('/users/:userId/rooms', getRoomsByUserIdHandler(userRepo, roomRepo, userRoomRepo))
   app.use(notFoundHandler)

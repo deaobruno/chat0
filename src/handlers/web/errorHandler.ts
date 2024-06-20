@@ -7,9 +7,11 @@ export default (error: BaseError, req: Request, res: Response, next: NextFunctio
 
   if (!statusCode) error = new InternalServerError(message)
 
-  console.log(error)
+  console.log('[Server]', error)
 
   res
     .status(statusCode)
-    .render('error.html')
+    .send({
+      error: message
+    })
 }

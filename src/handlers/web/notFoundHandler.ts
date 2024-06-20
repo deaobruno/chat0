@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 
 export default (req: Request, res: Response) => {
-  console.log(`invalid url: ${req.method} ${req.url}`)
+  console.log(`[Server] Invalid url: ${req.method} ${req.url}`)
 
   res
     .status(404)

@@ -1,8 +1,9 @@
 import 'reflect-metadata'
 import { DataSource } from 'typeorm'
-import { User } from '../entity/User'
-import { Room } from '../entity/Room'
-import { UserRoom } from '../entity/UserRoom'
+import { User } from '../entity/user/User'
+import { Room } from '../entity/room/Room'
+import { UserRoom } from '../entity/userRoom/UserRoom'
+import { Message } from '../entity/message/Message'
 
 type DbConfig = {
   host: string
@@ -25,7 +26,7 @@ export default (config: DbConfig) => {
     useUnifiedTopology: true,
     useNewUrlParser: true,
     synchronize: false,
-    entities: [User, Room, UserRoom],
+    entities: [User, Room, UserRoom, Message],
     migrations: [],
     subscribers: [],
   })

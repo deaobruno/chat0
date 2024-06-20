@@ -1,5 +1,5 @@
 import { Repository } from 'typeorm'
-import { UserRoom } from '../entity/UserRoom'
+import { UserRoom } from '../entity/userRoom/UserRoom'
 
 type IUserRoomRepo = Repository<UserRoom> &  {
   findByUserId: (userId: string) => Promise<UserRoom[]>
