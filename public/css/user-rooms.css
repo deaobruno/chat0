@@ -8,15 +8,13 @@ html, body {
   box-sizing: border-box;
 }
 
-form {
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
+#top {
+  height: 10%;
+  width: 100%;
+  padding: 12.5px 100px;
 }
 
-#logout {
+button {
   width: 50px;
   height: 50px;
   font-size: 14px;
@@ -24,7 +22,73 @@ form {
   text-align: center;
   line-height: 50px;
   color: #FFF;
-  margin-top: 10px;
-  margin-left: 725px;
   cursor: pointer;
+}
+
+#top_right {
+  height: 100%;
+  width: 100%;
+  padding-left: 90%;
+}
+
+#top_right button {
+  margin: 0 7.5px;
+}
+
+#new_room {
+  float: left;
+  line-height: 20px;
+}
+
+#logout {
+  float: right;
+}
+
+#middle {
+  height: 80%;
+  width: 100%;
+}
+
+#left {
+  height: 100%;
+  width: 20%;
+  float: left;
+}
+
+#right {
+  height: 100%;
+  width: 80%;
+  float: left;
+}
+
+#bottom {
+  height: 10%;
+  width: 100%;
+}
+
+#rooms {
+  display: none;
+  cursor: pointer;
+}
+
+#messages {
+  height: 85%;
+  width: 100%;
+  padding: 20px;
+}
+
+#new_message {
+  height: 15%;
+  width: 100%;
+  padding: 15px 75px;
+}
+
+#username {
+  display: none;
+}
+
+#text {
+  width: 85%;
+  height: 100%;
+  padding: 0 20px;
 }

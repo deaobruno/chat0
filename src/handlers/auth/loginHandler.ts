@@ -20,9 +20,5 @@ export default (userRepo: IUserRepo) => async (req: Request, res: Response, next
 
   await userRepo.update({ userId }, { isLogged: true })
 
-  res
-    .status(200)
-    .send({
-      url: `http://localhost:8081/users/${userId}/rooms`,
-    })
+  res.send({ url: `http://localhost:8081/users/rooms` })
 }

@@ -59,7 +59,7 @@ export default (userRepo: IUserRepo, roomRepo: IRoomRepo, userRoomRepo: IUserRoo
       status: UserRoomStatus.OK,
     })
 
-    const { username, password } = user
-
-    res.status(201).send({ url: `/rooms/${roomId}?u=${ username }&p=${ password }` })
+    res
+      .status(201)
+      .send()
   }

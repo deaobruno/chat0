@@ -9,12 +9,29 @@
   <link rel="stylesheet" href="/css/user-rooms.css">
 </head>
 <body>
-  <input id="user_id" type="hidden" value="<%= userId %>">
-  <form>
-    <a href="http://localhost:8081/create-room"><button id="new_room">New Room</button></a>
-    <button id="logout">Logout</button>
-  </form>
-  Create a new <a href="http://localhost:8081/create-room">room</a>
+  <div id="top">
+    <div id="top_right">
+      <button id="new_room">New Room</button>
+      <button id="logout">Logout</button>
+    </div>
+  </div>
+  <div id="middle">
+    <div id="left">
+      <div id="create_room">
+        Create a new room
+      </div>
+      <div id="rooms"></div>
+    </div>
+    <div id="right">
+      <input type="hidden" id="active_room">
+      <div id="messages"></div>
+      <form id="new_message">
+        <input id="text" type="text" placeholder="Type your message">
+        <button id="submit" type="submit">Send</button>
+      </form>
+    </div>
+  </div>
+  <div id="bottom"></div>
   <script type="text/javascript" src="/js/helpers/request.js"></script>
   <script type="text/javascript" src="/js/helpers/logout.js"></script>
   <script type="text/javascript" src="/js/user-rooms.js"></script>

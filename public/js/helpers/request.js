@@ -6,7 +6,8 @@ const request = {
     xhr.onreadystatechange = function () {
       if (this.readyState != 4) return
 
-      const response = JSON.parse(this.responseText)
+      const responseText = this.responseText
+      const response = responseText === '' ? responseText : JSON.parse(responseText)
 
       if ((this.status < 200 || this.status >= 400) && error) return error(response)
       if (success) success(response)
@@ -22,7 +23,8 @@ const request = {
     xhr.onreadystatechange = function () {
       if (this.readyState != 4) return
 
-      const response = JSON.parse(this.responseText)
+      const responseText = this.responseText
+      const response = responseText === '' ? responseText : JSON.parse(responseText)
 
       if ((this.status < 200 || this.status >= 400) && error) return error(response)
       if (success) success(response)

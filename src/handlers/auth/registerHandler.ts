@@ -30,5 +30,7 @@ export default (userRepo: IUserRepo) => async (req: Request, res: Response, next
     isLogged: true
   })
 
-  res.status(201).send({ url: `/users/${userId}/rooms` })
+  res
+    .status(201)
+    .send({ url: `/users/rooms` })
 }

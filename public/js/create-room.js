@@ -20,7 +20,10 @@ $('#create_room').submit(event => {
       description,
       type,
     },
-    success: response => window.location.href = response.url,
+    success: () => {
+      $('#title').val('')
+      $('#description').val('')
+    },
     error: response => console.log(response),
   })
 })

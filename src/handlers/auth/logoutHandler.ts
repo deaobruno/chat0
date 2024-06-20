@@ -6,7 +6,5 @@ export default (userRepo: IUserRepo) => async (req: Request, res: Response, next
 
   await userRepo.update({ userId }, { isLogged: false })
 
-  res
-    .status(200)
-    .send({ url: '/' })
+  res.send({ url: '/' })
 }

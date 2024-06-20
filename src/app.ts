@@ -31,7 +31,7 @@ const server = Server({
       messageRepo,
     })
     await db.initialize()
-    server.listen(8081, () => console.log('server started'))
+    server.listen(8081, () => console.log('[Server] HTTP server started'))
   } catch (error) {
     console.log(error)
   }

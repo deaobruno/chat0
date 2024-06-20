@@ -1,7 +1,7 @@
 import { Server } from 'node:http'
-import { URL, URLSearchParams } from 'node:url'
 import { randomUUID } from 'node:crypto'
 import socketIo from 'socket.io'
+import { compare } from 'bcrypt'
 import IUserRepo from '../repositories/IUserRepo'
 import IRoomRepo from '../repositories/IRoomRepo'
 import IUserRoomRepo from '../repositories/IUserRoomRepo'
@@ -18,9 +18,9 @@ type SocketConfig = {
 }
 
 type Message = {
-  author: string
   text: string
   time: string
+  roomId: string
 }
 
 export default (config: SocketConfig) => {
@@ -28,42 +28,39 @@ export default (config: SocketConfig) => {
   const io = new socketIo.Server(server)
 
   io.on('connection', async socket => {
-    const { referer } = socket.handshake.headers
+    try {
+      const { token } = socket.handshake.auth
 
-    if (!referer) return console.log('[Socket] "referer" is empty')
+      if (!token) return console.log('[Socket] Authentication is missing')
 
-    const roomId = referer.split('/')[4].split('?')[0]
+      const [username, password] = Buffer.from(token, 'base64').toString().split(':')
 
-    if (!roomId) return console.log('[Socket] "roomId" is empty')
+      if (!username) return console.log('[Socket] Invalid "username"')
 
-    const room = await roomRepo.findOneByRoomId(roomId)
+      const user = await userRepo.findOneByUsername(username)
 
-    if (!room) return console.log(`[Socket] Room does not exist: ${roomId}`)
-    if (!room.isActive) return console.log(`[Socket] Room is not active: ${roomId}`)
+      if (!user) return console.log('[Socket] User not found')
+      if (!await compare(password, user.password))
+        return console.log('[Socket] Authentication failed')
+      if (!user.isLogged) return console.log('[Socket] User not logged')
 
-    const url = new URL(referer)
-    const username = new URLSearchParams(url.search).get('u')
+      const { userId } = user
+      const userRooms = await userRoomRepo.findByUserId(userId)
+      const rooms = await Promise.all(userRooms.map(async userRoom => {
+        const { roomId } = userRoom
+        const room = await roomRepo.findOneByRoomId(roomId)
 
-    if (!username || typeof username !== 'string') return console.log(`[Socket] Invalid username: ${username}`)
+        ;(await messageRepo.findByRoomId(roomId))
+          .forEach(message => room?.addMessage(message))
 
-    const user = await userRepo.findOneByUsername(username)
+        socket.join(roomId)
 
-    if (!user) return console.log(`[Socket] User not found: ${username}`)
+        return room
+      }))
 
-    const { userId } = user
-    const roomUser = await userRoomRepo.findOneByUserIdAndRoomId(userId, roomId)
-
-    if (!roomUser) return console.log(`[Socket] User is not in room: ${roomId} ${username}`)
-
-    console.log(`[Socket] socket: ${socket.id} / roomId: ${roomId} / userId: ${userId}`)
-
-    const messages = await messageRepo.findByRoomId(roomId)
-
-    socket.join(roomId)
-    socket.emit('previousMessages', messages)
-    socket
-      .on('newMessage', async (message: Message) => {
-        const { text, time } = message
+      socket.emit('updateRooms', rooms)
+      socket.on('newMessage', async (message: Message) => {
+        const { roomId, text, time  } = message
 
         await messageRepo.insert({
           messageId: randomUUID(),
@@ -78,5 +75,8 @@ export default (config: SocketConfig) => {
 
         socket.to(roomId).emit('receivedMessage', message)
       })
+    } catch (error) {
+      console.log(`[Socket] ${error}`)
+    }
   })
 }

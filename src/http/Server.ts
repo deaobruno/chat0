@@ -12,8 +12,7 @@ import errorHandler from '../handlers/web/errorHandler'
 import registerHandler from '../handlers/auth/registerHandler'
 import loginHandler from '../handlers/auth/loginHandler'
 import logoutHandler from '../handlers/auth/logoutHandler'
-import getRoomByIdHandler from '../handlers/room/getRoomByIdHandler'
-import getRoomsByUserIdHandler from '../handlers/room/getRoomsByUserIdHandler'
+import renderRoomsByUserIdHandler from '../handlers/room/renderRoomsByUserIdHandler'
 import createRoomHandler from '../handlers/room/createRoomHandler'
 import insertRoomHandler from '../handlers/room/insertRoomHandler'
 import AuthenticationMiddleware from '../middlewares/AuthenticationMiddleware'
@@ -44,8 +43,7 @@ export default (config: ServerConfig) => {
   app.post('/logout', authenticationMiddleware, logoutHandler(userRepo))
   app.get('/create-room', createRoomHandler)
   app.post('/rooms', authenticationMiddleware, insertRoomHandler(userRepo, roomRepo, userRoomRepo))
-  app.get('/rooms/:roomId', getRoomByIdHandler(userRepo, roomRepo, userRoomRepo))
-  app.get('/users/:userId/rooms', getRoomsByUserIdHandler(userRepo, roomRepo, userRoomRepo))
+  app.get('/users/rooms', renderRoomsByUserIdHandler)
   app.use(notFoundHandler)
   app.use(errorHandler)
 

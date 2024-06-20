@@ -1,6 +1,7 @@
 import { Entity, Column, ObjectIdColumn, PrimaryColumn } from 'typeorm'
 import RoomType from './RoomType'
 import RoomStatus from './RoomStatus'
+import { Message } from '../message/Message'
 
 @Entity()
 export class Room {
@@ -22,6 +23,8 @@ export class Room {
   @Column()
   status: number
 
+  readonly messages: Message[] = []
+
   get isDirect() { return this.status === RoomType.DIRECT }
 
   get isGroup() { return this.status === RoomType.GROUP }
@@ -33,4 +36,8 @@ export class Room {
   get isInactive() { return this.status === RoomStatus.INACTIVE }
 
   get isBanned() { return this.status === RoomStatus.BANNED }
+
+  addMessage(message: Message): void {
+    this.messages.push(message)
+  }
 }

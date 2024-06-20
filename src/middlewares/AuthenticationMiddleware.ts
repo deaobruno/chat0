@@ -20,7 +20,7 @@ export default (userRepo: IUserRepo) => async (req: Request, res: Response, next
   const user = await userRepo.findOneByUsername(username)
 
   if (!user) return next(new UnauthorizedError('User not found'))
-  if (!compare(password, user.password)) return next(new UnauthorizedError())
+  if (!await compare(password, user.password)) return next(new UnauthorizedError())
   if (!user.isLogged) return next(new UnauthorizedError('User not logged'))
 
   req.body.user = user

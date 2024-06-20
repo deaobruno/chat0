@@ -18,6 +18,7 @@ $('#register').submit(event => {
       password,
     },
     success: response => {
+      localStorage.setItem('uUn', username)
       localStorage.setItem('bAb64', btoa(`${username}:${password}`))
       window.location.href = response.url
     },
@@ -43,6 +44,7 @@ $('#login').submit(event => {
       password,
     },
     success: response => {
+      localStorage.setItem('uUn', username)
       localStorage.setItem('bAb64', btoa(`${username}:${password}`))
       window.location.href = response.url
     },
