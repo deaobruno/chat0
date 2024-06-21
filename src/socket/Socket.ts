@@ -51,6 +51,7 @@ export default (config: SocketConfig) => {
         const room = await roomRepo.findOneByRoomId(roomId)
 
         ;(await messageRepo.findLastMessagesByRoomId(roomId))
+          .reverse()
           .forEach(message => room?.addMessage(message))
 
         socket.join(roomId)

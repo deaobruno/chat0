@@ -71,8 +71,14 @@ button {
   cursor: pointer;
 }
 
+#active_room_top {
+  height: 10%;
+  width: 100%;
+  padding: 10px;
+}
+
 #messages {
-  height: 85%;
+  height: 75%;
   width: 100%;
   padding: 20px;
 }

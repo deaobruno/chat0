@@ -4,6 +4,7 @@ const socket = io('http://localhost:8081', {
   }
 })
 const username = localStorage.getItem('uUn')
+let userRooms = []
 
 $('#new_room').click(event => {
   event.preventDefault()
@@ -17,8 +18,18 @@ $(document).on('click', '.room', event => {
   event.preventDefault()
 
   const [, roomId] = $(event.target).closest('.room').attr('id').split('_')
-
+  const clickedRoom = userRooms.find(room => room.roomId === roomId)
+  const { title, messages } = clickedRoom
+  
   $('#active_room').val(roomId)
+  $('#active_room_title').html(title)
+  $('#messages').empty()
+
+  messages.forEach(message => {
+    const { text, author } = message
+
+    $('#messages').append(`<strong>${author}</strong>: ${text}</br>`)
+  })
 })
 
 $('#new_message').submit(event => {
@@ -48,6 +59,8 @@ socket
   .on('updateRooms', rooms => {
     if (rooms.length <= 0) return
 
+    userRooms = rooms
+
     $('#create_room').css('display', 'none')
     $('#rooms').empty()
 
@@ -60,8 +73,11 @@ socket
           <div class="last"></div>
           </div></br>`)
 
-        if (messages.length > 0) 
-          $(`#room_${roomId} .last`).html(`<strong>${messages[0].author}</strong>: ${room.messages[0].text}`)
+        if (messages.length <= 0) return
+
+        const lastMessage = messages[messages.length - 1]
+
+        $(`#room_${roomId} .last`).html(`<strong>${lastMessage.author}</strong>: ${lastMessage.text}`)
       }
     )
 
@@ -70,9 +86,13 @@ socket
 
 function renderMessage(message) {
   const { roomId, text, author } = message
-  const newMessage = `<strong>${author}</strong>: ${text}</br>  `
+  const newMessage = `<strong>${author}</strong>: ${text}</br>`
 
   $(`#room_${roomId} .last`).html(newMessage)
 
   if ($('#active_room').val() === roomId) $('#messages').append(newMessage)
+
+  const { messages } = userRooms.find(room => room.roomId === roomId)
+
+  messages.push(message)
 }
