@@ -6,6 +6,48 @@ const socket = io('http://localhost:8081', {
 const username = localStorage.getItem('uUn')
 let userRooms = []
 
+$('#search_room_title').on('keyup', event => {
+  const search = $(event.target).val()
+
+  if (search.length < 3 || search.length > 50) return
+
+  request.get({
+    url: `http://localhost:8081/rooms/title/${search}`,
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Basic ${auth}`,
+    },
+    success: response => {
+      $('#search_rooms').empty()
+      response.rooms
+        .forEach(room => 
+          $('#search_rooms')
+            .append(`<option id="room_option_${room.roomId}" class="room-option" value="${room.title}"></option>`))
+    },
+    error: response => console.log(response),
+  })
+})
+
+$('#join_room').on('click', event => {
+  const roomTitle = $('#search_room_title').val()
+  const roomId = $(`#search_rooms option[value='${roomTitle}']`).attr('id')?.split('_')[2]
+
+  if (!roomTitle || !roomId) return
+
+  request.post({
+    url: `http://localhost:8081/rooms/${roomId}/join`,
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Basic ${auth}`,
+    },
+    success: () => {
+      $('#search_room_title').val('')
+      socket.emit('getRoomsUpdate')
+    },
+    error: response => console.log(response),
+  })
+})
+
 $('#new_room').click(event => {
   event.preventDefault()
 

@@ -60,22 +60,40 @@ export default (config: SocketConfig) => {
       }))
 
       socket.emit('updateRooms', rooms)
-      socket.on('newMessage', async (message: Message) => {
-        const { roomId, text, time  } = message
+      socket
+        .on('newMessage', async (message: Message) => {
+          const { roomId, text, time  } = message
 
-        await messageRepo.insert({
-          messageId: randomUUID(),
-          roomId,
-          userId,
-          author: username,
-          text,
-          time: new Date(time),
-          type: MessageType.TEXT,
-          status: MessageStatus.SENT,
+          await messageRepo.insert({
+            messageId: randomUUID(),
+            roomId,
+            userId,
+            author: username,
+            text,
+            time: new Date(time),
+            type: MessageType.TEXT,
+            status: MessageStatus.SENT,
+          })
+
+          socket.to(roomId).emit('receivedMessage', message)
         })
+        .on('getRoomsUpdate', async () => {
+          const userRooms = await userRoomRepo.findByUserId(userId)
+          const rooms = await Promise.all(userRooms.map(async userRoom => {
+            const { roomId } = userRoom
+            const room = await roomRepo.findOneByRoomId(roomId)
+    
+            ;(await messageRepo.findLastMessagesByRoomId(roomId))
+              .reverse()
+              .forEach(message => room?.addMessage(message))
+    
+            socket.join(roomId)
+    
+            return room
+          }))
 
-        socket.to(roomId).emit('receivedMessage', message)
-      })
+          socket.emit('updateRooms', rooms)
+        })
     } catch (error) {
       console.log(`[Socket] ${error}`)
     }

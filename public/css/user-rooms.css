@@ -25,10 +25,22 @@ button {
   cursor: pointer;
 }
 
+#top_center {
+  height: 100%;
+  width: 80%;
+  float: left;
+}
+
+#search_room_title {
+  height: 100%;
+  width: 90%;
+  padding: 0 20px;
+}
+
 #top_right {
   height: 100%;
-  width: 100%;
-  padding-left: 90%;
+  width: 20%;
+  float: left;
 }
 
 #top_right button {

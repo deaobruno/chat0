@@ -16,6 +16,6 @@ export default (config: RoutesConfig) => {
   const { app, roomRepo, userRoomRepo, authenticationMiddleware } = config
 
   app.post('/rooms', authenticationMiddleware, createRoomHandler(roomRepo, userRoomRepo))
-  app.post('/rooms/:roomId/join', authenticationMiddleware, joinRoomHandler(userRoomRepo))
+  app.post('/rooms/:roomId/join', authenticationMiddleware, joinRoomHandler(roomRepo, userRoomRepo))
   app.get('/rooms/title/:title', authenticationMiddleware, findRoomsByTitleHandler(roomRepo))
 }
