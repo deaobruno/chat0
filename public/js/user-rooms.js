@@ -22,14 +22,11 @@ $(document).on('click', '.room', event => {
   const { title, messages } = clickedRoom
   
   $('#active_room').val(roomId)
-  $('#active_room_title').html(title)
+  $('#active_room_title').html(`<strong>${title}</strong>`)
   $('#messages').empty()
 
-  messages.forEach(message => {
-    const { text, author } = message
-
-    $('#messages').append(`<strong>${author}</strong>: ${text}</br>`)
-  })
+  messages.forEach(message => 
+    $('#messages').append(`<strong>${message.author}</strong>: ${message.text}</br>`))
 })
 
 $('#new_message').submit(event => {
