@@ -3,7 +3,7 @@ const logout = event => {
   event.preventDefault()
 
   request.post({
-    url: 'http://localhost:8081/logout',
+    url: 'http://localhost:8081/auth/logout',
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Basic ${auth}`,

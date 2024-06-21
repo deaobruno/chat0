@@ -6,16 +6,10 @@ import ejs from 'ejs'
 import IUserRepo from '../repositories/IUserRepo'
 import IRoomRepo from '../repositories/IRoomRepo'
 import IUserRoomRepo from '../repositories/IUserRoomRepo'
-import homeHandler from '../handlers/web/homeHandler'
 import notFoundHandler from '../handlers/web/notFoundHandler'
 import errorHandler from '../handlers/web/errorHandler'
-import registerHandler from '../handlers/auth/registerHandler'
-import loginHandler from '../handlers/auth/loginHandler'
-import logoutHandler from '../handlers/auth/logoutHandler'
-import renderRoomsByUserIdHandler from '../handlers/room/renderRoomsByUserIdHandler'
-import createRoomHandler from '../handlers/room/createRoomHandler'
-import insertRoomHandler from '../handlers/room/insertRoomHandler'
 import AuthenticationMiddleware from '../middlewares/AuthenticationMiddleware'
+import Routes from '../routes/Routes'
 
 type ServerConfig = {
   userRepo: IUserRepo
@@ -37,13 +31,13 @@ export default (config: ServerConfig) => {
   app.set('views', publicDir)
   app.engine('html', ejs.renderFile)
   app.set('view engine', 'html')
-  app.get('/', homeHandler)
-  app.post('/register', registerHandler(userRepo))
-  app.post('/login', loginHandler(userRepo))
-  app.post('/logout', authenticationMiddleware, logoutHandler(userRepo))
-  app.get('/create-room', createRoomHandler)
-  app.post('/rooms', authenticationMiddleware, insertRoomHandler(userRepo, roomRepo, userRoomRepo))
-  app.get('/users/rooms', renderRoomsByUserIdHandler)
+  Routes({
+    app,
+    userRepo,
+    roomRepo,
+    userRoomRepo,
+    authenticationMiddleware,
+  })
   app.use(notFoundHandler)
   app.use(errorHandler)
 
