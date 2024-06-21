@@ -50,7 +50,7 @@ export default (config: SocketConfig) => {
         const { roomId } = userRoom
         const room = await roomRepo.findOneByRoomId(roomId)
 
-        ;(await messageRepo.findByRoomId(roomId))
+        ;(await messageRepo.findLastMessagesByRoomId(roomId))
           .forEach(message => room?.addMessage(message))
 
         socket.join(roomId)
