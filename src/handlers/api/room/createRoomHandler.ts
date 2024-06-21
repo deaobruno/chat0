@@ -3,31 +3,10 @@ import { NextFunction, Request, Response } from 'express'
 import BadRequestError from '../../../errors/BadRequestError'
 import IRoomRepo from '../../../repositories/IRoomRepo'
 import IUserRoomRepo from '../../../repositories/IUserRoomRepo'
-
-enum RoomType {
-  'DIRECT',
-  'GROUP',
-}
-
-enum RoomStatus {
-  'ACTIVE',
-  'IN_EVALUATION',
-  'INACTIVE',
-  'BANNED',
-}
-
-enum UserRoomLevel {
-  'ROOT',
-  'ADMIN',
-  'USER'
-}
-
-enum UserRoomStatus {
-  'PENDING',
-  'OK',
-  'BLOCKED',
-  'BANNED',
-}
+import RoomType from '../../../entity/room/RoomType'
+import RoomStatus from '../../../entity/room/RoomStatus'
+import UserRoomLevel from '../../../entity/userRoom/UserRoomLevel'
+import UserRoomStatus from '../../../entity/userRoom/UserRoomStatus'
 
 export default (roomRepo: IRoomRepo, userRoomRepo: IUserRoomRepo) =>
   async (req: Request, res: Response, next: NextFunction) => {

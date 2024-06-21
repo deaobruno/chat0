@@ -2,6 +2,7 @@ import { Express, NextFunction, Request, Response } from 'express'
 import IRoomRepo from '../repositories/IRoomRepo'
 import IUserRoomRepo from '../repositories/IUserRoomRepo'
 import createRoomHandler from '../handlers/api/room/createRoomHandler'
+import joinRoomHandler from '../handlers/api/room/joinRoomHandler'
 
 type RoutesConfig = {
   app: Express
@@ -14,4 +15,5 @@ export default (config: RoutesConfig) => {
   const { app, roomRepo, userRoomRepo, authenticationMiddleware } = config
 
   app.post('/rooms', authenticationMiddleware, createRoomHandler(roomRepo, userRoomRepo))
+  app.post('/rooms/:roomId/join', authenticationMiddleware, joinRoomHandler(userRoomRepo))
 }

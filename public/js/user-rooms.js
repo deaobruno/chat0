@@ -31,6 +31,7 @@ $('#new_message').submit(event => {
   if (!text) return alert('message is empty')
 
   const message = {
+    author: username,
     roomId,
     text,
     time: new Date().toISOString(),
@@ -68,8 +69,8 @@ socket
   })
 
 function renderMessage(message) {
-  const { roomId, text } = message
-  const newMessage = `<strong>${username}</strong>: ${text}`
+  const { roomId, text, author } = message
+  const newMessage = `<strong>${author}</strong>: ${text}</br>  `
 
   $(`#room_${roomId} .last`).html(newMessage)
 
