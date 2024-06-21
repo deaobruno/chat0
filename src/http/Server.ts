@@ -6,8 +6,8 @@ import ejs from 'ejs'
 import IUserRepo from '../repositories/IUserRepo'
 import IRoomRepo from '../repositories/IRoomRepo'
 import IUserRoomRepo from '../repositories/IUserRoomRepo'
-import notFoundHandler from '../handlers/web/notFoundHandler'
-import errorHandler from '../handlers/web/errorHandler'
+import renderNotFoundHandler from '../handlers/web/error/renderNotFoundHandler'
+import renderErrorHandler from '../handlers/web/error/renderErrorHandler'
 import AuthenticationMiddleware from '../middlewares/AuthenticationMiddleware'
 import Routes from '../routes/Routes'
 
@@ -38,8 +38,8 @@ export default (config: ServerConfig) => {
     userRoomRepo,
     authenticationMiddleware,
   })
-  app.use(notFoundHandler)
-  app.use(errorHandler)
+  app.use(renderNotFoundHandler)
+  app.use(renderErrorHandler)
 
   return server
 }

@@ -1,8 +1,8 @@
 import { Express, NextFunction, Request, Response } from 'express'
 import IUserRepo from '../repositories/IUserRepo'
-import registerHandler from '../handlers/auth/registerHandler'
-import loginHandler from '../handlers/auth/loginHandler'
-import logoutHandler from '../handlers/auth/logoutHandler'
+import registerHandler from '../handlers/api/auth/registerHandler'
+import loginHandler from '../handlers/api/auth/loginHandler'
+import logoutHandler from '../handlers/api/auth/logoutHandler'
 
 type RoutesConfig = {
   app: Express

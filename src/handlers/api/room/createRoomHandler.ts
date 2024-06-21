@@ -1,9 +1,8 @@
 import { randomUUID } from 'node:crypto'
 import { NextFunction, Request, Response } from 'express'
-import BadRequestError from '../../errors/BadRequestError'
-import IRoomRepo from '../../repositories/IRoomRepo'
-import IUserRepo from '../../repositories/IUserRepo'
-import IUserRoomRepo from '../../repositories/IUserRoomRepo'
+import BadRequestError from '../../../errors/BadRequestError'
+import IRoomRepo from '../../../repositories/IRoomRepo'
+import IUserRoomRepo from '../../../repositories/IUserRoomRepo'
 
 enum RoomType {
   'DIRECT',
@@ -30,7 +29,7 @@ enum UserRoomStatus {
   'BANNED',
 }
 
-export default (userRepo: IUserRepo, roomRepo: IRoomRepo, userRoomRepo: IUserRoomRepo) =>
+export default (roomRepo: IRoomRepo, userRoomRepo: IUserRoomRepo) =>
   async (req: Request, res: Response, next: NextFunction) => {
     const { user, title, description, type } = req.body
 

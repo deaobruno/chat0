@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from 'express'
 import { compare } from 'bcrypt'
-import BadRequestError from '../../errors/BadRequestError'
-import UnauthorizedError from '../../errors/UnauthorizedError'
-import IUserRepo from '../../repositories/IUserRepo'
+import BadRequestError from '../../../errors/BadRequestError'
+import UnauthorizedError from '../../../errors/UnauthorizedError'
+import IUserRepo from '../../../repositories/IUserRepo'
 
 export default (userRepo: IUserRepo) => async (req: Request, res: Response, next: NextFunction) => {
   const { username, password } = req.body
