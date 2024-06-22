@@ -23,7 +23,7 @@ export default (roomRepo: IRoomRepo, userRoomRepo: IUserRoomRepo) =>
       roomId,
       title,
       description,
-      type: <any>RoomType[type],
+      type: RoomType[type as keyof typeof RoomType],
       status: RoomStatus.ACTIVE,
     })
 
