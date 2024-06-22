@@ -1,9 +1,2 @@
-import BaseError from './BaseError'
-
-export default class NotFoundError extends BaseError {
-  statusCode = 404
-
-  constructor(message = 'Not Found') {
-    super(message)
-  }
-}
+export default (message = 'Not Found') => 
+  Object.assign(new Error(message), { statusCode: 404 })

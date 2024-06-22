@@ -1,3 +1,3 @@
-export default abstract class BaseError extends Error {
-  abstract statusCode: number
-}
+type BaseError = Error & { statusCode: number }
+
+export default BaseError

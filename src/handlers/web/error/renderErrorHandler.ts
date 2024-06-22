@@ -5,7 +5,7 @@ import InternalServerError from '../../../errors/InternalServerError'
 export default (error: BaseError, req: Request, res: Response, next: NextFunction) => {
   let { statusCode, message } = error
 
-  if (!statusCode) error = new InternalServerError(message)
+  if (!statusCode) error = InternalServerError(message)
 
   console.log('[Server]', error)
 

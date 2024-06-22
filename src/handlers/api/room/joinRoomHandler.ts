@@ -14,12 +14,12 @@ export default (roomRepo: IRoomRepo, userRoomRepo: IUserRoomRepo) =>
     const { roomId } = req.params
     const room = await roomRepo.findOneByRoomId(roomId)
 
-    if (!room) return next(new NotFoundError('Room not found'))
-    if (!room.isActive) return next(new BadRequestError('Invalid room'))
+    if (!room) return next(NotFoundError('Room not found'))
+    if (!room.isActive) return next(BadRequestError('Invalid room'))
 
     const userInRoom = await userRoomRepo.findOneByUserIdAndRoomId(userId, roomId)
 
-    if (userInRoom) return new ConflictError('User already in room')
+    if (userInRoom) return ConflictError('User already in room')
 
     const userRoomId = randomUUID()
 

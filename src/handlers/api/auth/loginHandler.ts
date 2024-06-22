@@ -7,14 +7,14 @@ import IUserRepo from '../../../repositories/IUserRepo'
 export default (userRepo: IUserRepo) => async (req: Request, res: Response, next: NextFunction) => {
   const { username, password } = req.body
 
-  if (!username) return next(new BadRequestError('Missing "username"'))
-  if (!password) return next(new BadRequestError('Missing "password"'))
+  if (!username) return next(BadRequestError('Missing "username"'))
+  if (!password) return next(BadRequestError('Missing "password"'))
 
   const user = await userRepo.findOneByUsername(username)
 
-  if (!user) return next(new UnauthorizedError())
-  if (!await compare(password, user.password)) return next(new UnauthorizedError())
-  if (user.isLogged) return next(new UnauthorizedError('User already logged'))
+  if (!user) return next(UnauthorizedError())
+  if (!await compare(password, user.password)) return next(UnauthorizedError())
+  if (user.isLogged) return next(UnauthorizedError('User already logged'))
 
   const { userId } = user
 

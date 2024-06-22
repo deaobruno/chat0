@@ -1,9 +1,2 @@
-import BaseError from './BaseError'
-
-export default class UnauthorizedError extends BaseError {
-  statusCode = 401
-
-  constructor(message = 'Unauthorized') {
-    super(message)
-  }
-}
+export default (message = 'Unauthorized') => 
+  Object.assign(new Error(message), { statusCode: 401 })

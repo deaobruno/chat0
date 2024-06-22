@@ -7,7 +7,7 @@ export default (roomRepo: IRoomRepo) =>
     const { title } = req.params
 
     if (title.length < 3 || title.length > 50)
-      return next(new BadRequestError('Invalid title'))
+      return next(BadRequestError('Invalid title'))
 
     const rooms = await roomRepo.findByTitle(title)
 

@@ -1,9 +1,2 @@
-import BaseError from './BaseError'
-
-export default class BadRequestError extends BaseError {
-  statusCode = 400
-
-  constructor(message = 'Bad Request') {
-    super(message)
-  }
-}
+export default (message = 'Bad Request') => 
+  Object.assign(new Error(message), { statusCode: 400 })

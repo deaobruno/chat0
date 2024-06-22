@@ -12,9 +12,9 @@ export default (roomRepo: IRoomRepo, userRoomRepo: IUserRoomRepo) =>
   async (req: Request, res: Response, next: NextFunction) => {
     const { user, title, description, type } = req.body
 
-    if (!title || typeof title !== 'string') return next(new BadRequestError('Invalid "title"'))
-    if (!description || typeof description !== 'string') return next(new BadRequestError('Invalid "description"'))
-    if (!type || !['DIRECT', 'GROUP'].includes(type)) return next(new BadRequestError('Invalid "type"'))
+    if (!title || typeof title !== 'string') return next(BadRequestError('Invalid "title"'))
+    if (!description || typeof description !== 'string') return next(BadRequestError('Invalid "description"'))
+    if (!type || !['DIRECT', 'GROUP'].includes(type)) return next(BadRequestError('Invalid "type"'))
 
     const { userId } = user
     const roomId = randomUUID()

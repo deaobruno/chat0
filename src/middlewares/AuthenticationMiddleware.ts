@@ -6,22 +6,22 @@ import IUserRepo from '../repositories/IUserRepo'
 export default (userRepo: IUserRepo) => async (req: Request, res: Response, next: NextFunction) => {
   const { authorization } = req.headers
 
-  if (!authorization) return next(new UnauthorizedError('header["Authorization"] is missing'))
+  if (!authorization) return next(UnauthorizedError('header["Authorization"] is missing'))
 
   const [type, base64] = authorization.split(' ')
 
-  if (type !== 'Basic') return next(new UnauthorizedError(`Invalid authentication type: ${type}`))
-  if (!base64) return next(new UnauthorizedError(`Invalid authentication: ${base64}`))
+  if (type !== 'Basic') return next(UnauthorizedError(`Invalid authentication type: ${type}`))
+  if (!base64) return next(UnauthorizedError(`Invalid authentication: ${base64}`))
 
   const [username, password] = Buffer.from(base64, 'base64').toString().split(':')
   
-  if (!username) return next(new UnauthorizedError('Invalid "username"'))
+  if (!username) return next(UnauthorizedError('Invalid "username"'))
 
   const user = await userRepo.findOneByUsername(username)
 
-  if (!user) return next(new UnauthorizedError('User not found'))
-  if (!await compare(password, user.password)) return next(new UnauthorizedError())
-  if (!user.isLogged) return next(new UnauthorizedError('User not logged'))
+  if (!user) return next(UnauthorizedError('User not found'))
+  if (!await compare(password, user.password)) return next(UnauthorizedError())
+  if (!user.isLogged) return next(UnauthorizedError('User not logged'))
 
   req.body.user = user
 
