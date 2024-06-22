@@ -1,10 +1,10 @@
 import { Express } from 'express'
-import renderHomeHandler from '../handlers/web/auth/renderHomeHandler'
-import renderRoomsByUserIdHandler from '../handlers/web/user/renderRoomsByUserIdHandler'
-import renderCreateRoomHandler from '../handlers/web/room/renderCreateRoomHandler'
+import RenderHomeHandler from '../handlers/web/auth/RenderHomeHandler'
+import RenderRoomsByUserIdHandler from '../handlers/web/user/RenderRoomsByUserIdHandler'
+import RenderCreateRoomHandler from '../handlers/web/room/RenderCreateRoomHandler'
 
 export default (app: Express) => {
-  app.get('/', renderHomeHandler)
-  app.get('/create-room', renderCreateRoomHandler)
-  app.get('/users/rooms', renderRoomsByUserIdHandler)
+  app.get('/', RenderHomeHandler)
+  app.get('/create-room', RenderCreateRoomHandler)
+  app.get('/users/rooms', RenderRoomsByUserIdHandler)
 }

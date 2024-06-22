@@ -1,19 +1,20 @@
-import { Express, NextFunction, Request, Response } from 'express'
+import { Express } from 'express'
+import IMiddleware from '../middlewares/IMiddleware'
 import IUserRepo from '../repositories/IUserRepo'
-import registerHandler from '../handlers/api/auth/registerHandler'
-import loginHandler from '../handlers/api/auth/loginHandler'
-import logoutHandler from '../handlers/api/auth/logoutHandler'
+import RegisterHandler from '../handlers/api/auth/RegisterHandler'
+import LoginHandler from '../handlers/api/auth/LoginHandler'
+import LogoutHandler from '../handlers/api/auth/LogoutHandler'
 
 type RoutesConfig = {
   app: Express
-  authenticationMiddleware: (req: Request, res: Response, next: NextFunction) => void
+  authenticationMiddleware: IMiddleware
   userRepo: IUserRepo
 }
 
 export default (config: RoutesConfig) => {
   const { app, userRepo, authenticationMiddleware } = config
 
-  app.post('/auth/register', registerHandler(userRepo))
-  app.post('/auth/login', loginHandler(userRepo))
-  app.post('/auth/logout', authenticationMiddleware, logoutHandler(userRepo))
+  app.post('/auth/register', RegisterHandler(userRepo))
+  app.post('/auth/login', LoginHandler(userRepo))
+  app.post('/auth/logout', authenticationMiddleware, LogoutHandler(userRepo))
 }

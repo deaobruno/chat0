@@ -1,4 +1,5 @@
-import { Express, NextFunction, Request, Response } from 'express'
+import { Express } from 'express'
+import IMiddleware from '../middlewares/IMiddleware'
 import AuthRoutes from './AuthRoutes'
 import RoomRoutes from './RoomRoutes'
 import WebRoutes from './WebRoutes'
@@ -8,7 +9,7 @@ import IUserRoomRepo from '../repositories/IUserRoomRepo'
 
 type RoutesConfig = {
   app: Express
-  authenticationMiddleware: (req: Request, res: Response, next: NextFunction) => void
+  authenticationMiddleware: IMiddleware
   userRepo: IUserRepo
   roomRepo: IRoomRepo
   userRoomRepo: IUserRoomRepo
