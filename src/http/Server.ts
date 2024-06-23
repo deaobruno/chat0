@@ -1,28 +1,58 @@
-import { createServer } from 'node:http'
+import { STATUS_CODES, createServer } from 'node:http'
 import { join } from 'node:path'
-import express, { json, urlencoded } from 'express'
+import express, { NextFunction, Request, Response, Router, json, urlencoded } from 'express'
 import favicon from 'serve-favicon'
 import ejs from 'ejs'
-import IUserRepo from '../repositories/IUserRepo'
-import IRoomRepo from '../repositories/IRoomRepo'
-import IUserRoomRepo from '../repositories/IUserRoomRepo'
 import RenderNotFoundHandler from '../handlers/web/error/RenderNotFoundHandler'
 import RenderErrorHandler from '../handlers/web/error/RenderErrorHandler'
-import AuthenticationMiddleware from '../middlewares/AuthenticationMiddleware'
 import Routes from '../routes/Routes'
+import IController from '../controllers/IController'
+import InternalServerError from '../errors/InternalServerError'
 
-type ServerConfig = {
-  userRepo: IUserRepo
-  roomRepo: IRoomRepo
-  userRoomRepo: IUserRoomRepo
-}
-
-export default (config: ServerConfig) => {
-  const { userRepo, roomRepo, userRoomRepo } = config
+export default (dependencies: any) => {
   const app = express()
+  const expressRouter = Router()
+  const jsonResponse = (res: Response, statusCode: number, data?: unknown) =>
+    res.status(statusCode).json(data ?? { message: STATUS_CODES[statusCode] })
+  const htmlResponse = (res: Response, statusCode: number, path: string, data?: object) =>
+    res.status(statusCode).render(path, data)
+  const handleRequest = (controller: IController) => async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { headers, body, params, query } = req
+      const { type, statusCode, data, path } = await controller({
+        headers,
+        payload: { ...body, ...params, ...query },
+      })
+
+      switch (type) {
+        case 'json':
+          jsonResponse(res, statusCode, data)
+          break;
+      
+        case 'html':
+          if (!path) return next(InternalServerError('Controller is missing "path"'))
+
+          htmlResponse(res, statusCode, path, data)
+          break;
+
+        default:
+          next(InternalServerError('Controller is missing "type"'))
+          break;
+      }
+    } catch (error) {
+      next(error)
+    }
+  }
+  const router = {
+    get: (url: string, controller: any) => expressRouter.get(url, handleRequest(controller)),
+    post: (url: string, controller: any) => expressRouter.post(url, handleRequest(controller)),
+    put: (url: string, controller: any) => expressRouter.put(url, handleRequest(controller)),
+    delete: (url: string, controller: any) => expressRouter.delete(url, handleRequest(controller)),
+  }
   const server = createServer(app)
-  const authenticationMiddleware = AuthenticationMiddleware(userRepo)
   const publicDir = join(__dirname, '..', '..', 'public')
+
+  Routes(dependencies, router)
 
   app.use(json())
   app.use(urlencoded({ extended: false }))
@@ -31,13 +61,7 @@ export default (config: ServerConfig) => {
   app.set('views', publicDir)
   app.engine('html', ejs.renderFile)
   app.set('view engine', 'html')
-  Routes({
-    app,
-    userRepo,
-    roomRepo,
-    userRoomRepo,
-    authenticationMiddleware,
-  })
+  app.use(expressRouter)
   app.use(RenderNotFoundHandler)
   app.use(RenderErrorHandler)
 

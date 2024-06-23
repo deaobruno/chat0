@@ -1,10 +1,14 @@
-import { Express } from 'express'
-import RenderHomeHandler from '../handlers/web/auth/RenderHomeHandler'
-import RenderRoomsByUserIdHandler from '../handlers/web/user/RenderRoomsByUserIdHandler'
-import RenderCreateRoomHandler from '../handlers/web/room/RenderCreateRoomHandler'
+import IRouter from './IRouter'
+import IController from '../controllers/IController'
 
-export default (app: Express) => {
-  app.get('/', RenderHomeHandler)
-  app.get('/create-room', RenderCreateRoomHandler)
-  app.get('/users/rooms', RenderRoomsByUserIdHandler)
+type Dependencies = {
+  homeController: IController
+}
+
+export default (dependencies: Dependencies, router: IRouter) => {
+  const { homeController } = dependencies
+
+  router.get('/', homeController)
+  // router.get('/create-room', RenderCreateRoomHandler)
+  // router.get('/users/rooms', RenderRoomsByUserIdHandler)
 }

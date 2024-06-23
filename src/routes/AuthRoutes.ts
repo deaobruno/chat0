@@ -1,4 +1,4 @@
-import { Express } from 'express'
+import IRouter from './IRouter'
 import IMiddleware from '../middlewares/IMiddleware'
 import IUserRepo from '../repositories/IUserRepo'
 import RegisterHandler from '../handlers/api/auth/RegisterHandler'
@@ -6,15 +6,15 @@ import LoginHandler from '../handlers/api/auth/LoginHandler'
 import LogoutHandler from '../handlers/api/auth/LogoutHandler'
 
 type RoutesConfig = {
-  app: Express
+  router: IRouter
   authenticationMiddleware: IMiddleware
   userRepo: IUserRepo
 }
 
 export default (config: RoutesConfig) => {
-  const { app, userRepo, authenticationMiddleware } = config
+  const { router, userRepo, authenticationMiddleware } = config
 
-  app.post('/auth/register', RegisterHandler(userRepo))
-  app.post('/auth/login', LoginHandler(userRepo))
-  app.post('/auth/logout', authenticationMiddleware, LogoutHandler(userRepo))
+  // router.post('/auth/register', RegisterHandler(userRepo))
+  // router.post('/auth/login', LoginHandler(userRepo))
+  // router.post('/auth/logout', authenticationMiddleware, LogoutHandler(userRepo))
 }
