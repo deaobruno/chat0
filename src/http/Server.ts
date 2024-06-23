@@ -42,14 +42,14 @@ export default (dependencies: any) => {
       next(error)
     }
   }
-  const router = {
-    get: (url: string, controller: any) => expressRouter.get(url, handleRequest(controller)),
-    post: (url: string, controller: any) => expressRouter.post(url, handleRequest(controller)),
-    put: (url: string, controller: any) => expressRouter.put(url, handleRequest(controller)),
-    delete: (url: string, controller: any) => expressRouter.delete(url, handleRequest(controller)),
-  }
   const server = createServer(app)
   const publicDir = join(__dirname, '..', '..', 'public')
+  const router = {
+    get: (url: string, controller: IController) => expressRouter.get(url, handleRequest(controller)),
+    post: (url: string, controller: IController) => expressRouter.post(url, handleRequest(controller)),
+    put: (url: string, controller: IController) => expressRouter.put(url, handleRequest(controller)),
+    delete: (url: string, controller: IController) => expressRouter.delete(url, handleRequest(controller)),
+  }
 
   Routes(dependencies, router)
 

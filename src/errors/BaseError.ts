@@ -1,3 +1,3 @@
-type BaseError = Error & { statusCode: number }
+type BaseError = Error & { type: string, statusCode: number }
 
 export default BaseError

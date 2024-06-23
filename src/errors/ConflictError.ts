@@ -1,2 +1,2 @@
 export default (message = 'Conflict') => 
-  Object.assign(new Error(message), { statusCode: 409 })
+  Object.assign(new Error(message), { type: 'json', statusCode: 409 })

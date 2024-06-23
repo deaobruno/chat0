@@ -1,2 +1,2 @@
 export default (message = 'Unauthorized') => 
-  Object.assign(new Error(message), { statusCode: 401 })
+  Object.assign(new Error(message), { type: 'json', statusCode: 401 })

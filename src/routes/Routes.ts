@@ -5,7 +5,7 @@ import WebRoutes from './WebRoutes'
 import IRouter from './IRouter'
 
 export default (dependencies: any, router: IRouter) => {
-  // AuthRoutes(config)
+  AuthRoutes(dependencies, router)
   // RoomRoutes(config)
   WebRoutes(dependencies, router)
 }

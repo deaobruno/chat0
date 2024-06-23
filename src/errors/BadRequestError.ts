@@ -1,2 +1,2 @@
 export default (message = 'Bad Request') => 
-  Object.assign(new Error(message), { statusCode: 400 })
+  Object.assign(new Error(message), { type: 'json', statusCode: 400 })

@@ -1,2 +1,2 @@
 export default (message = 'Internal Server Error') => 
-  Object.assign(new Error(message), { statusCode: 500 })
+  Object.assign(new Error(message), { type: 'json', statusCode: 500 })

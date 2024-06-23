@@ -1,2 +1,2 @@
 export default (message = 'Not Found') => 
-  Object.assign(new Error(message), { statusCode: 404 })
+  Object.assign(new Error(message), { type: 'json', statusCode: 404 })

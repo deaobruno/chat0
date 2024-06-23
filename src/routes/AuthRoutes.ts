@@ -1,20 +1,19 @@
 import IRouter from './IRouter'
 import IMiddleware from '../middlewares/IMiddleware'
-import IUserRepo from '../repositories/IUserRepo'
-import RegisterHandler from '../handlers/api/auth/RegisterHandler'
-import LoginHandler from '../handlers/api/auth/LoginHandler'
-import LogoutHandler from '../handlers/api/auth/LogoutHandler'
+import IController from '../controllers/IController'
 
-type RoutesConfig = {
-  router: IRouter
-  authenticationMiddleware: IMiddleware
-  userRepo: IUserRepo
+type Dependencies = {
+  loginController: IController
+  userRoomsController: IController
+  createRoomController: IController
 }
 
-export default (config: RoutesConfig) => {
-  const { router, userRepo, authenticationMiddleware } = config
+export default (dependencies: Dependencies, router: IRouter) => {
+  const {
+    loginController,
+  } = dependencies
 
   // router.post('/auth/register', RegisterHandler(userRepo))
-  // router.post('/auth/login', LoginHandler(userRepo))
+  router.post('/auth/login', loginController)
   // router.post('/auth/logout', authenticationMiddleware, LogoutHandler(userRepo))
 }
