@@ -9,6 +9,7 @@ import HomeController from './controllers/web/HomeController'
 import UserRoomsController from './controllers/web/UserRoomsController'
 import CreateRoomController from './controllers/web/CreateRoomController'
 import NotFoundController from './controllers/web/NotFoundController'
+import ErrorController from './controllers/web/ErrorController'
 
 const db = Db({
   host: 'localhost',
@@ -23,11 +24,13 @@ const homeController = HomeController()
 const userRoomsController = UserRoomsController()
 const createRoomController = CreateRoomController()
 const notFoundController = NotFoundController()
+const errorController = ErrorController()
 const server = Server({
   homeController,
   userRoomsController,
   createRoomController,
   notFoundController,
+  errorController,
 })
 
 ;(async () => {
