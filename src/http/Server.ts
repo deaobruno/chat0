@@ -3,13 +3,13 @@ import { join } from 'node:path'
 import express, { NextFunction, Request, Response, Router, json, urlencoded } from 'express'
 import favicon from 'serve-favicon'
 import ejs from 'ejs'
-import RenderNotFoundHandler from '../handlers/web/error/RenderNotFoundHandler'
 import RenderErrorHandler from '../handlers/web/error/RenderErrorHandler'
 import Routes from '../routes/Routes'
 import IController from '../controllers/IController'
 import InternalServerError from '../errors/InternalServerError'
 
 export default (dependencies: any) => {
+  const { notFoundController } = dependencies
   const app = express()
   const expressRouter = Router()
   const jsonResponse = (res: Response, statusCode: number, data?: unknown) =>
@@ -62,7 +62,7 @@ export default (dependencies: any) => {
   app.engine('html', ejs.renderFile)
   app.set('view engine', 'html')
   app.use(expressRouter)
-  app.use(RenderNotFoundHandler)
+  app.use(handleRequest(notFoundController))
   app.use(RenderErrorHandler)
 
   return server

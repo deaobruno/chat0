@@ -8,6 +8,7 @@ import MessageRepo from './repositories/MessageRepo'
 import HomeController from './controllers/web/HomeController'
 import UserRoomsController from './controllers/web/UserRoomsController'
 import CreateRoomController from './controllers/web/CreateRoomController'
+import NotFoundController from './controllers/web/NotFoundController'
 
 const db = Db({
   host: 'localhost',
@@ -21,10 +22,12 @@ const messageRepo = MessageRepo(db)
 const homeController = HomeController()
 const userRoomsController = UserRoomsController()
 const createRoomController = CreateRoomController()
+const notFoundController = NotFoundController()
 const server = Server({
   homeController,
   userRoomsController,
   createRoomController,
+  notFoundController,
 })
 
 ;(async () => {
