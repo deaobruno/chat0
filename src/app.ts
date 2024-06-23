@@ -7,6 +7,7 @@ import Socket from './socket/Socket'
 import MessageRepo from './repositories/MessageRepo'
 import HomeController from './controllers/web/HomeController'
 import UserRoomsController from './controllers/web/UserRoomsController'
+import CreateRoomController from './controllers/web/CreateRoomController'
 
 const db = Db({
   host: 'localhost',
@@ -19,9 +20,11 @@ const userRoomRepo = UserRoomRepo(db)
 const messageRepo = MessageRepo(db)
 const homeController = HomeController()
 const userRoomsController = UserRoomsController()
+const createRoomController = CreateRoomController()
 const server = Server({
   homeController,
   userRoomsController,
+  createRoomController,
 })
 
 ;(async () => {
