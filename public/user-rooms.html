@@ -1,48 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chat0 - My Rooms</title>
-  <script src="https://code.jquery.com/jquery-3.7.1.slim.min.js" integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script>
-  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js" integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO" crossorigin="anonymous"></script>
-  <link rel="stylesheet" href="/css/user-rooms.css">
-</head>
-<body>
-  <div id="top">
-    <div id="top_center">
-      <input id="search_room_title" type="text" placeholder="Search rooms" list="search_rooms">
-      <datalist id="search_rooms"></datalist>
-      <button id="join_room">Join</button>
-    </div>
-    <div id="top_right">
-      <button id="new_room">New Room</button>
-      <button id="logout">Logout</button>
-    </div>
-  </div>
-  <div id="middle">
-    <div id="left">
-      <div id="create_room">
-        Create a new room
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chat0 - My Rooms</title>
+    <script
+      src="https://code.jquery.com/jquery-3.7.1.slim.min.js"
+      integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8="
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.socket.io/4.7.5/socket.io.min.js"
+      integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO"
+      crossorigin="anonymous"
+    ></script>
+    <link rel="stylesheet" href="/css/user-rooms.css" />
+  </head>
+  <body>
+    <div id="top">
+      <div id="top_center">
+        <input
+          id="search_room_title"
+          type="text"
+          placeholder="Search rooms"
+          list="search_rooms"
+        />
+        <datalist id="search_rooms"></datalist>
+        <button id="join_room">Join</button>
       </div>
-      <div id="rooms"></div>
-    </div>
-    <div id="right">
-      <input type="hidden" id="active_room">
-      <div id="active_room_top">
-        <div id="active_room_image"></div>
-        <div id="active_room_title"></div>
+      <div id="top_right">
+        <button id="new_room">New Room</button>
+        <button id="logout">Logout</button>
       </div>
-      <div id="messages"></div>
-      <form id="new_message">
-        <input id="text" type="text" placeholder="Type your message">
-        <button id="submit" type="submit">Send</button>
-      </form>
     </div>
-  </div>
-  <div id="bottom"></div>
-  <script type="text/javascript" src="/js/helpers/request.js"></script>
-  <script type="text/javascript" src="/js/helpers/logout.js"></script>
-  <script type="text/javascript" src="/js/user-rooms.js"></script>
-</body>
+    <div id="middle">
+      <div id="left">
+        <div id="create_room">Create a new room</div>
+        <div id="rooms"></div>
+      </div>
+      <div id="right">
+        <input type="hidden" id="active_room" />
+        <div id="active_room_top">
+          <div id="active_room_image"></div>
+          <div id="active_room_title"></div>
+          <button id="leave_active_room">Leave Room</button>
+        </div>
+        <div id="messages"></div>
+        <form id="new_message">
+          <input id="text" type="text" placeholder="Type your message" />
+          <button id="submit" type="submit">Send</button>
+        </form>
+      </div>
+    </div>
+    <div id="bottom"></div>
+    <script type="text/javascript" src="/js/helpers/request.js"></script>
+    <script type="text/javascript" src="/js/helpers/logout.js"></script>
+    <script type="text/javascript" src="/js/user-rooms.js"></script>
+  </body>
 </html>

@@ -19,6 +19,7 @@ import ErrorController from './controllers/web/ErrorController'
 import InsertRoomController from './controllers/api/room/InsertRoomController'
 import FindRoomsByTitleController from './controllers/api/room/FindRoomsByTitleController'
 import JoinRoomController from './controllers/api/room/JoinRoomController'
+import LeaveRoomController from './controllers/api/room/LeaveRoomController'
 
 const db = Db({
   host: 'localhost',
@@ -43,6 +44,7 @@ const logoutController = LogoutController(userRepo)
 const insertRoomController = InsertRoomController(hash, roomRepo, userRoomRepo)
 const findRoomsByTitleController = FindRoomsByTitleController(roomRepo)
 const joinRoomController = JoinRoomController(hash, roomRepo, userRoomRepo)
+const leaveRoomController = LeaveRoomController(roomRepo, userRoomRepo)
 const server = Server({
   authenticationMiddleware,
   homeController,
@@ -56,6 +58,7 @@ const server = Server({
   insertRoomController,
   findRoomsByTitleController,
   joinRoomController,
+  leaveRoomController,
 })
 
 ;(async () => {

@@ -48,7 +48,7 @@ $('#join_room').on('click', event => {
   })
 })
 
-$('#new_room').click(event => {
+$('#new_room, #create_room').click(event => {
   event.preventDefault()
 
   window.location.href = 'http://localhost:8081/create-room'
@@ -62,13 +62,38 @@ $(document).on('click', '.room', event => {
   const [, roomId] = $(event.target).closest('.room').attr('id').split('_')
   const clickedRoom = userRooms.find(room => room.roomId === roomId)
   const { title, messages } = clickedRoom
-  
+
   $('#active_room').val(roomId)
   $('#active_room_title').html(`<strong>${title}</strong>`)
+  $('#leave_active_room').css('display', 'block')
   $('#messages').empty()
 
   messages.forEach(message => 
     $('#messages').append(`<strong>${message.author}</strong>: ${message.text}</br>`))
+})
+
+$('#leave_active_room').on('click', event => {
+  event.preventDefault()
+
+  const roomId = $('#active_room').val()
+
+  if (!roomId) return alert('roomId is missing')
+
+  request.delete({
+    url: `http://localhost:8081/rooms/${roomId}/leave`,
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Basic ${auth}`,
+    },
+    success: () => {
+      $('#active_room').val('')
+      $('#active_room_title').html('')
+      $('#leave_active_room').css('display', 'none')
+      $('#messages').empty()
+      socket.emit('getRoomsUpdate')
+    },
+    error: response => console.log(response),
+  })
 })
 
 $('#new_message').submit(event => {
@@ -96,12 +121,18 @@ $('#new_message').submit(event => {
 socket
   .on('receivedMessage', renderMessage)
   .on('updateRooms', rooms => {
-    if (rooms.length <= 0) return
-
     userRooms = rooms
 
-    $('#create_room').css('display', 'none')
     $('#rooms').empty()
+
+    if (rooms.length <= 0) {
+      $('#rooms').css('display', 'none')
+      $('#create_room').css('display', 'block')
+
+      return
+    }
+
+    $('#create_room').css('display', 'none')
 
     rooms.forEach(
       room => {

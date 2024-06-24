@@ -78,6 +78,10 @@ button {
   width: 100%;
 }
 
+#create_room {
+  cursor: pointer;
+}
+
 #rooms {
   display: none;
   cursor: pointer;
@@ -87,6 +91,10 @@ button {
   height: 10%;
   width: 100%;
   padding: 10px;
+}
+
+#leave_active_room {
+  display: none;
 }
 
 #messages {

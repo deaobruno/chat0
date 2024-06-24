@@ -7,6 +7,7 @@ type Dependencies = {
   insertRoomController: IController
   findRoomsByTitleController: IController
   joinRoomController: IController
+  leaveRoomController: IController
 }
 
 export default (dependencies: Dependencies, router: IRouter) => {
@@ -15,9 +16,11 @@ export default (dependencies: Dependencies, router: IRouter) => {
     insertRoomController,
     findRoomsByTitleController,
     joinRoomController,
+    leaveRoomController,
   } = dependencies
 
   router.post('/rooms', authenticationMiddleware(insertRoomController))
   router.get('/rooms/title/:title', authenticationMiddleware(findRoomsByTitleController))
   router.post('/rooms/:roomId/join', authenticationMiddleware(joinRoomController))
+  router.delete('/rooms/:roomId/leave', authenticationMiddleware(leaveRoomController))
 }
