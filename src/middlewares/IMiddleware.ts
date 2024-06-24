@@ -1,5 +1,7 @@
-import { NextFunction, Request, Response } from 'express'
+import IController from '../controllers/IController'
+import IRequest from '../controllers/IRequest'
+import IResponse from '../controllers/IResponse'
 
-type IMiddleware = (req: Request, res: Response, next: NextFunction) => Promise<void>
+type IMiddleware = (controller: IController) => (request: IRequest) => Promise<IResponse>
 
 export default IMiddleware

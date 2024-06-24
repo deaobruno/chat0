@@ -12,6 +12,8 @@ import NotFoundController from './controllers/web/NotFoundController'
 import ErrorController from './controllers/web/ErrorController'
 import LoginController from './controllers/api/auth/LoginController'
 import Bcrypt from './encryption/Bcrypt'
+import AuthenticationMiddleware from './middlewares/AuthenticationMiddleware'
+import LogoutController from './controllers/api/auth/LogoutController'
 
 const db = Db({
   host: 'localhost',
@@ -23,19 +25,23 @@ const userRepo = UserRepo(db)
 const roomRepo = RoomRepo(db)
 const userRoomRepo = UserRoomRepo(db)
 const messageRepo = MessageRepo(db)
+const authenticationMiddleware = AuthenticationMiddleware(userRepo)
 const homeController = HomeController()
 const userRoomsController = UserRoomsController()
 const createRoomController = CreateRoomController()
 const notFoundController = NotFoundController()
 const errorController = ErrorController()
 const loginController = LoginController(userRepo, encryption)
+const logoutController = LogoutController(userRepo)
 const server = Server({
+  authenticationMiddleware,
   homeController,
   userRoomsController,
   createRoomController,
   notFoundController,
   errorController,
   loginController,
+  logoutController,
 })
 
 ;(async () => {

@@ -10,25 +10,27 @@ type Payload = {
   password: string
 }
 
-export default (userRepo: IUserRepo, encryption: IEncryption) => async (request: IRequest<Payload>): Promise<IResponse> => {
-  const { username, password } = request.payload
+export default (userRepo: IUserRepo, encryption: IEncryption) =>
+  async (request: IRequest<Payload>): Promise<IResponse> => {
+    const { username, password } = request.payload
 
-  if (!username) return BadRequestError('Missing "username"')
-  if (!password) return BadRequestError('Missing "password"')
+    if (!username) return BadRequestError('Missing "username"')
+    if (!password) return BadRequestError('Missing "password"')
 
-  const user = await userRepo.findOneByUsername(username)
+    const user = await userRepo.findOneByUsername(username)
 
-  if (!user) return UnauthorizedError()
-  if (!await encryption.validate(password, user.password)) return UnauthorizedError()
-  if (user.isLogged) return UnauthorizedError('User already logged')
+    if (!user) return UnauthorizedError()
+    if (!await encryption.validate(password, user.password))
+      return UnauthorizedError()
+    if (user.isLogged) return UnauthorizedError('User already logged')
 
-  const { userId } = user
+    const { userId } = user
 
-  await userRepo.update({ userId }, { isLogged: true })
+    await userRepo.update({ userId }, { isLogged: true })
 
-  return {
-    type: 'json',
-    statusCode: 200,
-    data: { url: `http://localhost:8081/users/rooms` },
+    return {
+      type: 'json',
+      statusCode: 200,
+      data: { url: `http://localhost:8081/users/rooms` },
+    }
   }
-}
