@@ -1,21 +1,22 @@
+import Crypto from './hash/Crypto'
+import Bcrypt from './encryption/Bcrypt'
 import Db from './database/Db'
+import Server from './http/Server'
+import Socket from './socket/Socket'
 import UserRepo from './repositories/UserRepo'
 import RoomRepo from './repositories/RoomRepo'
 import UserRoomRepo from './repositories/UserRoomRepo'
-import Server from './http/Server'
-import Socket from './socket/Socket'
 import MessageRepo from './repositories/MessageRepo'
 import HomeController from './controllers/web/HomeController'
 import UserRoomsController from './controllers/web/UserRoomsController'
 import CreateRoomController from './controllers/web/CreateRoomController'
-import NotFoundController from './controllers/web/NotFoundController'
-import ErrorController from './controllers/web/ErrorController'
 import LoginController from './controllers/api/auth/LoginController'
-import Bcrypt from './encryption/Bcrypt'
 import AuthenticationMiddleware from './middlewares/AuthenticationMiddleware'
 import LogoutController from './controllers/api/auth/LogoutController'
 import RegisterController from './controllers/api/auth/RegisterController'
-import Crypto from './hash/Crypto'
+import NotFoundController from './controllers/web/NotFoundController'
+import ErrorController from './controllers/web/ErrorController'
+import InsertRoomController from './controllers/api/room/InsertRoomController'
 
 const db = Db({
   host: 'localhost',
@@ -37,6 +38,7 @@ const errorController = ErrorController()
 const registerController = RegisterController(hash, encryption, userRepo)
 const loginController = LoginController(encryption, userRepo)
 const logoutController = LogoutController(userRepo)
+const insertRoomController = InsertRoomController(hash, roomRepo, userRoomRepo)
 const server = Server({
   authenticationMiddleware,
   homeController,
@@ -47,6 +49,7 @@ const server = Server({
   registerController,
   loginController,
   logoutController,
+  insertRoomController,
 })
 
 ;(async () => {
