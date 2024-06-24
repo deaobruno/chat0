@@ -10,9 +10,9 @@ type Payload = {
   password: string
 }
 
-export default (userRepo: IUserRepo, encryption: IEncryption) =>
+export default (encryption: IEncryption, userRepo: IUserRepo) =>
   async (request: IRequest<Payload>): Promise<IResponse> => {
-    const { username, password } = request.payload
+    const { payload: { username, password } } = request
 
     if (!username) return BadRequestError('Missing "username"')
     if (!password) return BadRequestError('Missing "password"')

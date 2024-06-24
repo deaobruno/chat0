@@ -14,12 +14,15 @@ import LoginController from './controllers/api/auth/LoginController'
 import Bcrypt from './encryption/Bcrypt'
 import AuthenticationMiddleware from './middlewares/AuthenticationMiddleware'
 import LogoutController from './controllers/api/auth/LogoutController'
+import RegisterController from './controllers/api/auth/RegisterController'
+import Crypto from './hash/Crypto'
 
 const db = Db({
   host: 'localhost',
   port: 27017,
   database: 'chat0',
 })
+const hash = Crypto()
 const encryption = Bcrypt()
 const userRepo = UserRepo(db)
 const roomRepo = RoomRepo(db)
@@ -31,7 +34,8 @@ const userRoomsController = UserRoomsController()
 const createRoomController = CreateRoomController()
 const notFoundController = NotFoundController()
 const errorController = ErrorController()
-const loginController = LoginController(userRepo, encryption)
+const registerController = RegisterController(hash, encryption, userRepo)
+const loginController = LoginController(encryption, userRepo)
 const logoutController = LogoutController(userRepo)
 const server = Server({
   authenticationMiddleware,
@@ -40,6 +44,7 @@ const server = Server({
   createRoomController,
   notFoundController,
   errorController,
+  registerController,
   loginController,
   logoutController,
 })
