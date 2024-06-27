@@ -1,16 +1,15 @@
 import { Server } from 'node:http'
-import { randomUUID } from 'node:crypto'
 import socketIo from 'socket.io'
 import { compare } from 'bcrypt'
+import IEvents from '../events/IEvents'
 import IUserRepo from '../repositories/IUserRepo'
 import IRoomRepo from '../repositories/IRoomRepo'
 import IUserRoomRepo from '../repositories/IUserRoomRepo'
 import IMessageRepo from '../repositories/IMessageRepo'
-import MessageType from '../entity/message/MessageType'
-import MessageStatus from '../entity/message/MessageStatus'
 
 type SocketConfig = {
   server: Server
+  events: IEvents
   userRepo: IUserRepo
   roomRepo: IRoomRepo
   userRoomRepo: IUserRoomRepo
@@ -24,7 +23,7 @@ type Message = {
 }
 
 export default (config: SocketConfig) => {
-  const { server, userRepo, roomRepo, userRoomRepo, messageRepo } = config
+  const { server, events, userRepo, roomRepo, userRoomRepo, messageRepo } = config
   const io = new socketIo.Server(server)
 
   io.on('connection', async socket => {
@@ -61,21 +60,9 @@ export default (config: SocketConfig) => {
 
       socket.emit('updateRooms', rooms)
       socket
-        .on('newMessage', async (message: Message) => {
-          const { roomId, text, time  } = message
-
-          await messageRepo.insert({
-            messageId: randomUUID(),
-            roomId,
-            userId,
-            author: username,
-            text,
-            time: new Date(time),
-            type: MessageType.TEXT,
-            status: MessageStatus.SENT,
-          })
-
-          socket.to(roomId).emit('receivedMessage', message)
+        .on('newMessage', (message: Message) => {
+          events.publish('newMessage', { socket, userId, message, author: username })
+          socket.to(message.roomId).emit('receivedMessage', message)
         })
         .on('getRoomsUpdate', async () => {
           const userRooms = await userRoomRepo.findByUserId(userId)

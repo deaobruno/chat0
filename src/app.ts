@@ -3,6 +3,7 @@ import Bcrypt from './encryption/Bcrypt'
 import Db from './database/Db'
 import Server from './http/Server'
 import Socket from './socket/Socket'
+import Events from './events/Events'
 import UserRepo from './repositories/UserRepo'
 import RoomRepo from './repositories/RoomRepo'
 import UserRoomRepo from './repositories/UserRoomRepo'
@@ -20,19 +21,25 @@ import InsertRoomController from './controllers/api/room/InsertRoomController'
 import FindRoomsByTitleController from './controllers/api/room/FindRoomsByTitleController'
 import JoinRoomController from './controllers/api/room/JoinRoomController'
 import LeaveRoomController from './controllers/api/room/LeaveRoomController'
+import NewMessageEvent from './events/NewMessageEvent'
 
 const db = Db({
   host: 'localhost',
   port: 27017,
   database: 'chat0',
 })
+// Drivers
 const hash = Crypto()
 const encryption = Bcrypt()
+const events = Events()
+// Repositories
 const userRepo = UserRepo(db)
 const roomRepo = RoomRepo(db)
 const userRoomRepo = UserRoomRepo(db)
 const messageRepo = MessageRepo(db)
+// Middlewares
 const authenticationMiddleware = AuthenticationMiddleware(userRepo)
+// Controllers
 const homeController = HomeController()
 const userRoomsController = UserRoomsController()
 const createRoomController = CreateRoomController()
@@ -45,6 +52,11 @@ const insertRoomController = InsertRoomController(hash, roomRepo, userRoomRepo)
 const findRoomsByTitleController = FindRoomsByTitleController(roomRepo)
 const joinRoomController = JoinRoomController(hash, roomRepo, userRoomRepo)
 const leaveRoomController = LeaveRoomController(roomRepo, userRoomRepo)
+// Events
+const newMessageEvent = NewMessageEvent({
+  hash,
+  messageRepo,
+})
 const server = Server({
   authenticationMiddleware,
   homeController,
@@ -61,10 +73,13 @@ const server = Server({
   leaveRoomController,
 })
 
+events.subscribe('newMessage', newMessageEvent)
+
 ;(async () => {
   try {
     Socket({
       server,
+      events,
       userRepo,
       roomRepo,
       userRoomRepo,
