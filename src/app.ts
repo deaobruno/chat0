@@ -22,6 +22,7 @@ import FindRoomsByTitleController from './controllers/api/room/FindRoomsByTitleC
 import JoinRoomController from './controllers/api/room/JoinRoomController'
 import LeaveRoomController from './controllers/api/room/LeaveRoomController'
 import NewMessageEvent from './events/NewMessageEvent'
+import GetRoomsByUserIdUseCase from './useCases/room/GetRoomsByUserIdUseCase'
 
 // Drivers
 const db = Db({
@@ -37,6 +38,12 @@ const userRepo = UserRepo(db)
 const roomRepo = RoomRepo(db)
 const userRoomRepo = UserRoomRepo(db)
 const messageRepo = MessageRepo(db)
+// Use Cases
+const getRoomByUserIdUseCase = GetRoomsByUserIdUseCase({
+  roomRepo,
+  userRoomRepo,
+  messageRepo,
+})
 // Middlewares
 const authenticationMiddleware = AuthenticationMiddleware(userRepo)
 // Controllers
@@ -77,9 +84,7 @@ Socket({
   server,
   events,
   userRepo,
-  roomRepo,
-  userRoomRepo,
-  messageRepo,
+  getRoomByUserIdUseCase,
 })
 
 events.subscribe('newMessage', newMessageEvent)

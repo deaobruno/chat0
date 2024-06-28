@@ -3,17 +3,13 @@ import socketIo from 'socket.io'
 import { compare } from 'bcrypt'
 import IEvents from '../events/IEvents'
 import IUserRepo from '../repositories/IUserRepo'
-import IRoomRepo from '../repositories/IRoomRepo'
-import IUserRoomRepo from '../repositories/IUserRoomRepo'
-import IMessageRepo from '../repositories/IMessageRepo'
+import IGetRoomsByUserIdUseCase from '../useCases/room/IGetRoomsByUserIdUseCase'
 
 type SocketConfig = {
   server: Server
   events: IEvents
   userRepo: IUserRepo
-  roomRepo: IRoomRepo
-  userRoomRepo: IUserRoomRepo
-  messageRepo: IMessageRepo
+  getRoomByUserIdUseCase: IGetRoomsByUserIdUseCase
 }
 
 type Message = {
@@ -27,9 +23,7 @@ export default (config: SocketConfig) => {
     server,
     events,
     userRepo,
-    roomRepo,
-    userRoomRepo,
-    messageRepo,
+    getRoomByUserIdUseCase,
   } = config
   const io = new socketIo.Server(server)
 
@@ -61,20 +55,9 @@ export default (config: SocketConfig) => {
           socket.to(message.roomId).emit('receivedMessage', message)
         })
         .on('getRoomsUpdate', async () => {
-          const userRooms = await userRoomRepo.findByUserId(userId)
-          const rooms = await Promise.all(userRooms.map(async userRoom => {
-            const { roomId } = userRoom
-            const room = await roomRepo.findOneByRoomId(roomId)
-    
-            ;(await messageRepo.findLastMessagesByRoomId(roomId))
-              .reverse()
-              .forEach(message => room?.addMessage(message))
-    
-            socket.join(roomId)
-    
-            return room
-          }))
+          const rooms = await getRoomByUserIdUseCase(userId)
 
+          rooms.forEach(room => socket.join(room.roomId))
           socket.emit('updateRooms', rooms)
         })
     } catch (error) {
