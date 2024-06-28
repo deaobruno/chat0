@@ -1,10 +1,56 @@
+const renderMessage = (message) => {
+  const { roomId, text, author } = message
+  const newMessage = `<strong>${author}</strong>: ${text}</br>`
+
+  $(`#room_${roomId} .last`).html(newMessage)
+
+  if ($('#active_room').val() === roomId) $('#messages').append(newMessage)
+
+  const { messages } = userRooms.find(room => room.roomId === roomId)
+
+  messages.push(message)
+}
+const username = localStorage.getItem('uUn')
+let userRooms = []
 const socket = io('http://localhost:8081', {
   auth: {
     token: auth
-  }
+  },
 })
-const username = localStorage.getItem('uUn')
-let userRooms = []
+  .on('connect', () => setTimeout(() => socket.emit('getRoomsUpdate'), 100))
+  .on('receivedMessage', renderMessage)
+  .on('updateRooms', rooms => {
+    userRooms = rooms
+
+    $('#rooms').empty()
+
+    if (rooms.length <= 0) {
+      $('#rooms').css('display', 'none')
+      $('#create_room').css('display', 'block')
+      return
+    }
+
+    $('#create_room').css('display', 'none')
+
+    rooms.forEach(
+      room => {
+        const { roomId, title, messages } = room
+
+        $('#rooms').append(`<div id="room_${roomId}" class="room">
+          <div>${title}</div>
+          <div class="last"></div>
+          </div></br>`)
+
+        if (messages.length <= 0) return
+
+        const lastMessage = messages[messages.length - 1]
+
+        $(`#room_${roomId} .last`).html(`<strong>${lastMessage.author}</strong>: ${lastMessage.text}`)
+      }
+    )
+
+    $('#rooms').css('display', 'block')
+  })
 
 $('#search_room_title').on('keyup', event => {
   const search = $(event.target).val()
@@ -117,52 +163,3 @@ $('#new_message').submit(event => {
 
   socket.emit('newMessage', message)
 })
-
-socket
-  .on('receivedMessage', renderMessage)
-  .on('updateRooms', rooms => {
-    userRooms = rooms
-
-    $('#rooms').empty()
-
-    if (rooms.length <= 0) {
-      $('#rooms').css('display', 'none')
-      $('#create_room').css('display', 'block')
-
-      return
-    }
-
-    $('#create_room').css('display', 'none')
-
-    rooms.forEach(
-      room => {
-        const { roomId, title, messages } = room
-
-        $('#rooms').append(`<div id="room_${roomId}" class="room">
-          <div>${title}</div>
-          <div class="last"></div>
-          </div></br>`)
-
-        if (messages.length <= 0) return
-
-        const lastMessage = messages[messages.length - 1]
-
-        $(`#room_${roomId} .last`).html(`<strong>${lastMessage.author}</strong>: ${lastMessage.text}`)
-      }
-    )
-
-    $('#rooms').css('display', 'block')
-  })
-
-function renderMessage(message) {
-  const { roomId, text, author } = message
-  const newMessage = `<strong>${author}</strong>: ${text}</br>`
-
-  $(`#room_${roomId} .last`).html(newMessage)
-
-  if ($('#active_room').val() === roomId) $('#messages').append(newMessage)
-
-  const { messages } = userRooms.find(room => room.roomId === roomId)
-
-  messages.push(message)
-}

@@ -23,12 +23,12 @@ import JoinRoomController from './controllers/api/room/JoinRoomController'
 import LeaveRoomController from './controllers/api/room/LeaveRoomController'
 import NewMessageEvent from './events/NewMessageEvent'
 
+// Drivers
 const db = Db({
   host: 'localhost',
   port: 27017,
   database: 'chat0',
 })
-// Drivers
 const hash = Crypto()
 const encryption = Bcrypt()
 const events = Events()
@@ -57,6 +57,7 @@ const newMessageEvent = NewMessageEvent({
   hash,
   messageRepo,
 })
+// Servers
 const server = Server({
   authenticationMiddleware,
   homeController,
@@ -72,19 +73,19 @@ const server = Server({
   joinRoomController,
   leaveRoomController,
 })
+Socket({
+  server,
+  events,
+  userRepo,
+  roomRepo,
+  userRoomRepo,
+  messageRepo,
+})
 
 events.subscribe('newMessage', newMessageEvent)
 
 ;(async () => {
   try {
-    Socket({
-      server,
-      events,
-      userRepo,
-      roomRepo,
-      userRoomRepo,
-      messageRepo,
-    })
     await db.initialize()
     server.listen(8081, () => console.log('[Server] HTTP server started'))
   } catch (error) {

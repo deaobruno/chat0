@@ -23,7 +23,14 @@ type Message = {
 }
 
 export default (config: SocketConfig) => {
-  const { server, events, userRepo, roomRepo, userRoomRepo, messageRepo } = config
+  const {
+    server,
+    events,
+    userRepo,
+    roomRepo,
+    userRoomRepo,
+    messageRepo,
+  } = config
   const io = new socketIo.Server(server)
 
   io.on('connection', async socket => {
@@ -32,7 +39,10 @@ export default (config: SocketConfig) => {
 
       if (!token) return console.log('[Socket] Authentication is missing')
 
-      const [username, password] = Buffer.from(token, 'base64').toString().split(':')
+      const [username, password] = Buffer
+        .from(token, 'base64')
+        .toString()
+        .split(':')
 
       if (!username) return console.log('[Socket] Invalid "username"')
 
@@ -44,24 +54,10 @@ export default (config: SocketConfig) => {
       if (!user.isLogged) return console.log('[Socket] User not logged')
 
       const { userId } = user
-      const userRooms = await userRoomRepo.findByUserId(userId)
-      const rooms = await Promise.all(userRooms.map(async userRoom => {
-        const { roomId } = userRoom
-        const room = await roomRepo.findOneByRoomId(roomId)
 
-        ;(await messageRepo.findLastMessagesByRoomId(roomId))
-          .reverse()
-          .forEach(message => room?.addMessage(message))
-
-        socket.join(roomId)
-
-        return room
-      }))
-
-      socket.emit('updateRooms', rooms)
       socket
         .on('newMessage', (message: Message) => {
-          events.publish('newMessage', { socket, userId, message, author: username })
+          events.publish('newMessage', { userId, message, author: username })
           socket.to(message.roomId).emit('receivedMessage', message)
         })
         .on('getRoomsUpdate', async () => {
