@@ -13,7 +13,7 @@ $('#create_room').submit(event => {
     url: 'http://localhost:8081/rooms',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Basic ${auth}`,
+      Authorization: auth,
     },
     data: {
       title,

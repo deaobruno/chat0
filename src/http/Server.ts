@@ -15,40 +15,46 @@ export default (dependencies: any) => {
     res.status(statusCode).json(data ?? { message: STATUS_CODES[statusCode] })
   const htmlResponse = (res: Response, statusCode: number, path: string, data?: object) =>
     res.status(statusCode).render(path, data)
-  const handleRequest = (controller: IController) => async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const { headers, body, params, query } = req
-      const { type, statusCode, data, path } = await controller({
-        headers,
-        payload: { ...body, ...params, ...query },
-      })
+  const handleRequest = (controller: IController) =>
+    async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const { headers, body, params, query } = req
+        const { type, statusCode, data, path } = await controller({
+          headers,
+          payload: { ...body, ...params, ...query },
+        })
 
-      switch (type) {
-        case 'json':
-          jsonResponse(res, statusCode, data)
-          break;
-      
-        case 'html':
-          if (!path) return next(InternalServerError('Controller is missing "path"'))
+        switch (type) {
+          case 'json':
+            jsonResponse(res, statusCode, data)
+            break;
+        
+          case 'html':
+            if (!path)
+              return next(InternalServerError('Controller is missing "path"'))
 
-          htmlResponse(res, statusCode, path, data)
-          break;
+            htmlResponse(res, statusCode, path, data)
+            break;
 
-        default:
-          next(InternalServerError('Controller is missing "type"'))
-          break;
+          default:
+            next(InternalServerError('Controller is missing "type"'))
+            break;
+        }
+      } catch (error) {
+        next(error)
       }
-    } catch (error) {
-      next(error)
     }
-  }
   const server = createServer(app)
   const publicDir = join(__dirname, '..', '..', 'public')
   const router = {
-    get: (url: string, controller: IController) => expressRouter.get(url, handleRequest(controller)),
-    post: (url: string, controller: IController) => expressRouter.post(url, handleRequest(controller)),
-    put: (url: string, controller: IController) => expressRouter.put(url, handleRequest(controller)),
-    delete: (url: string, controller: IController) => expressRouter.delete(url, handleRequest(controller)),
+    get: (url: string, controller: IController) =>
+      expressRouter.get(url, handleRequest(controller)),
+    post: (url: string, controller: IController) =>
+      expressRouter.post(url, handleRequest(controller)),
+    put: (url: string, controller: IController) =>
+      expressRouter.put(url, handleRequest(controller)),
+    delete: (url: string, controller: IController) =>
+      expressRouter.delete(url, handleRequest(controller)),
   }
 
   Routes(dependencies, router)

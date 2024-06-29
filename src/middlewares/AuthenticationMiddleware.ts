@@ -1,10 +1,10 @@
-import { compare } from 'bcrypt'
 import UnauthorizedError from '../errors/UnauthorizedError'
-import IUserRepo from '../repositories/IUserRepo'
 import IRequest from '../controllers/IRequest'
 import IResponse from '../controllers/IResponse'
 import { User } from '../entity/user/User'
 import IController from '../controllers/IController'
+import IAuthenticateUseCase from '../useCases/auth/IAuthenticateUseCase'
+import BaseError from '../errors/BaseError'
 
 type Payload = {
   username: string
@@ -12,28 +12,20 @@ type Payload = {
   user: User
 }
 
-export default (userRepo: IUserRepo) => (controller: IController) =>
+export default (authenticateUseCase: IAuthenticateUseCase) => 
+  (controller: IController) =>
   async (request: IRequest<Payload>): Promise<IResponse> => {
     const { authorization } = request.headers
 
-    if (!authorization) return UnauthorizedError('header["Authorization"] is missing')
+    if (!authorization)
+      return UnauthorizedError('header["Authorization"] is missing')
 
-    const [type, base64] = authorization.split(' ')
+    const userOrError = await authenticateUseCase(authorization)
+    const { statusCode } = userOrError as BaseError
 
-    if (type !== 'Basic') return UnauthorizedError(`Invalid authentication type: ${type}`)
-    if (!base64) return UnauthorizedError(`Invalid authentication: ${base64}`)
+    if (statusCode) return userOrError as BaseError
 
-    const [username, password] = Buffer.from(base64, 'base64').toString().split(':')
-    
-    if (!username) return UnauthorizedError('Invalid "username"')
-
-    const user = await userRepo.findOneByUsername(username)
-
-    if (!user) return UnauthorizedError('User not found')
-    if (!await compare(password, user.password)) return UnauthorizedError()
-    if (!user.isLogged) return UnauthorizedError('User not logged')
-
-    request.payload.user = user
+    request.payload.user = userOrError as User
 
     return controller(request)
   }

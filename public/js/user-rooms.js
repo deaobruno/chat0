@@ -45,12 +45,14 @@ const socket = io('http://localhost:8081', {
 
         const lastMessage = messages[messages.length - 1]
 
-        $(`#room_${roomId} .last`).html(`<strong>${lastMessage.author}</strong>: ${lastMessage.text}`)
+        $(`#room_${roomId} .last`)
+          .html(`<strong>${lastMessage.author}</strong>: ${lastMessage.text}`)
       }
     )
 
     $('#rooms').css('display', 'block')
   })
+  .on('connect_error', error => alert(error))
 
 $('#search_room_title').on('keyup', event => {
   const search = $(event.target).val()
@@ -61,7 +63,7 @@ $('#search_room_title').on('keyup', event => {
     url: `http://localhost:8081/rooms/title/${search}`,
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Basic ${auth}`,
+      Authorization: auth,
     },
     success: response => {
       $('#search_rooms').empty()
@@ -76,7 +78,9 @@ $('#search_room_title').on('keyup', event => {
 
 $('#join_room').on('click', event => {
   const roomTitle = $('#search_room_title').val()
-  const roomId = $(`#search_rooms option[value='${roomTitle}']`).attr('id')?.split('_')[2]
+  const roomId = $(`#search_rooms option[value='${roomTitle}']`)
+    .attr('id')
+    ?.split('_')[2]
 
   if (!roomTitle || !roomId) return
 
@@ -84,7 +88,7 @@ $('#join_room').on('click', event => {
     url: `http://localhost:8081/rooms/${roomId}/join`,
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Basic ${auth}`,
+      Authorization: auth,
     },
     success: () => {
       $('#search_room_title').val('')
@@ -114,8 +118,8 @@ $(document).on('click', '.room', event => {
   $('#leave_active_room').css('display', 'block')
   $('#messages').empty()
 
-  messages.forEach(message => 
-    $('#messages').append(`<strong>${message.author}</strong>: ${message.text}</br>`))
+  messages.forEach(message => $('#messages')
+    .append(`<strong>${message.author}</strong>: ${message.text}</br>`))
 })
 
 $('#leave_active_room').on('click', event => {
@@ -129,7 +133,7 @@ $('#leave_active_room').on('click', event => {
     url: `http://localhost:8081/rooms/${roomId}/leave`,
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Basic ${auth}`,
+      Authorization: auth,
     },
     success: () => {
       $('#active_room').val('')

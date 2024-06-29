@@ -1,4 +1,4 @@
-const auth = localStorage.getItem('bAb64')
+const auth = `Basic ${localStorage.getItem('bAb64')}`
 const logout = event => {
   event.preventDefault()
 
@@ -6,7 +6,7 @@ const logout = event => {
     url: 'http://localhost:8081/auth/logout',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Basic ${auth}`,
+      Authorization: auth,
     },
     success: response => {
       localStorage.setItem('bAb64', '')
