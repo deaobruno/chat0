@@ -6,7 +6,7 @@ import IResponse from '../../IResponse'
 import BadRequestError from '../../../errors/BadRequestError'
 import NotFoundError from '../../../errors/NotFoundError'
 import ConflictError from '../../../errors/ConflictError'
-import { User } from '../../../entity/user/User'
+import User from '../../../entity/user/User'
 import UserRoomLevel from '../../../entity/userRoom/UserRoomLevel'
 import UserRoomStatus from '../../../entity/userRoom/UserRoomStatus'
 

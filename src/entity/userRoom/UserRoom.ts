@@ -3,7 +3,7 @@ import UserRoomLevel from './UserRoomLevel'
 import UserRoomStatus from './UserRoomStatus'
 
 @Entity()
-export class UserRoom {
+export default class UserRoom {
   @ObjectIdColumn()
   _id: string
 

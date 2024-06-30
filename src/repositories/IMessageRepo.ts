@@ -1,5 +1,5 @@
 import { Repository } from 'typeorm';
-import { Message } from '../entity/message/Message'
+import Message from '../entity/message/Message'
 
 type IMessageRepo = Repository<Message> & {
   findLastMessagesByRoomId(roomId: string, skip?: number): Promise<Message[]>

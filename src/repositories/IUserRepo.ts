@@ -1,5 +1,5 @@
 import { Repository } from 'typeorm'
-import { User } from '../entity/user/User'
+import User from '../entity/user/User'
 
 type IUserRepo = Repository<User> & {
   findOneByUserId(userId: string): Promise<User | null>

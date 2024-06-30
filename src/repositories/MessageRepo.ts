@@ -1,5 +1,5 @@
 import { DataSource } from 'typeorm'
-import { Message } from '../entity/message/Message'
+import Message from '../entity/message/Message'
 
 export default (db: DataSource) => db
   .getRepository(Message)

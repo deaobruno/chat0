@@ -1,9 +1,9 @@
 import 'reflect-metadata'
 import { DataSource } from 'typeorm'
-import { User } from '../entity/user/User'
-import { Room } from '../entity/room/Room'
-import { UserRoom } from '../entity/userRoom/UserRoom'
-import { Message } from '../entity/message/Message'
+import User from '../entity/user/User'
+import Room from '../entity/room/Room'
+import UserRoom from '../entity/userRoom/UserRoom'
+import Message from '../entity/message/Message'
 
 type DbConfig = {
   host: string

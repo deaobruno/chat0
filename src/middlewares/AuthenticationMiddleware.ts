@@ -1,7 +1,7 @@
 import UnauthorizedError from '../errors/UnauthorizedError'
 import IRequest from '../controllers/IRequest'
 import IResponse from '../controllers/IResponse'
-import { User } from '../entity/user/User'
+import User from '../entity/user/User'
 import IController from '../controllers/IController'
 import IAuthenticateUseCase from '../useCases/auth/IAuthenticateUseCase'
 import BaseError from '../errors/BaseError'

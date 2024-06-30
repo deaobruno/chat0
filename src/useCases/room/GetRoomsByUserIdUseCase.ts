@@ -1,4 +1,4 @@
-import { Room } from '../../entity/room/Room'
+import Room from '../../entity/room/Room'
 import IUserRoomRepo from '../../repositories/IUserRoomRepo'
 import IRoomRepo from '../../repositories/IRoomRepo'
 import IMessageRepo from '../../repositories/IMessageRepo'

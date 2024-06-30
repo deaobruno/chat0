@@ -3,7 +3,7 @@ import MessageType from './MessageType'
 import MessageStatus from './MessageStatus'
 
 @Entity()
-export class Message {
+export default class Message {
   @ObjectIdColumn()
   _id: string
 

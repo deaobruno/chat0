@@ -1,10 +1,10 @@
 import { Entity, Column, ObjectIdColumn, PrimaryColumn } from 'typeorm'
 import RoomType from './RoomType'
 import RoomStatus from './RoomStatus'
-import { Message } from '../message/Message'
+import Message from '../message/Message'
 
 @Entity()
-export class Room {
+export default class Room {
   @ObjectIdColumn()
   _id: string
 
