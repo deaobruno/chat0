@@ -1,5 +1,5 @@
-import MessageStatus from '../entity/message/MessageStatus'
-import MessageType from '../entity/message/MessageType'
+import MessageStatus from '../entities/message/MessageStatus'
+import MessageType from '../entities/message/MessageType'
 import IHash from '../hash/IHash'
 import IMessageRepo from '../repositories/IMessageRepo'
 import IEvent from './IEvent'

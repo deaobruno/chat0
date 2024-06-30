@@ -1,5 +1,5 @@
 import { Repository } from 'typeorm';
-import Room from '../entity/room/Room'
+import Room from '../entities/room/Room'
 
 type IRoomRepo = Repository<Room> & {
   findByTitle(title: string): Promise<Room[]>

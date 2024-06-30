@@ -1,5 +1,5 @@
 import IUseCase from '../IUseCase'
-import Room from '../../entity/room/Room'
+import Room from '../../entities/room/Room'
 
 type IGetRoomsByUserIdUseCase = IUseCase<string, Room[]>
 

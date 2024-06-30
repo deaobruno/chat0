@@ -1,4 +1,4 @@
-import User from '../../../entity/user/User'
+import User from '../../../entities/user/User'
 import IUserRepo from '../../../repositories/IUserRepo'
 import IRequest from '../../IRequest'
 import IResponse from '../../IResponse'

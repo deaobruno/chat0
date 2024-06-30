@@ -1,5 +1,5 @@
 import IEncryption from '../../encryption/IEncryption'
-import User from '../../entity/user/User'
+import User from '../../entities/user/User'
 import BaseError from '../../errors/BaseError'
 import UnauthorizedError from '../../errors/UnauthorizedError'
 import IUserRepo from '../../repositories/IUserRepo'

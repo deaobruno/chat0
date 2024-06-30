@@ -1,5 +1,5 @@
 import { DataSource } from 'typeorm'
-import UserRoom from '../entity/userRoom/UserRoom'
+import UserRoom from '../entities/userRoom/UserRoom'
 
 export default (db: DataSource) => db
   .getRepository(UserRoom)

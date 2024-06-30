@@ -6,9 +6,9 @@ import IResponse from '../../IResponse'
 import BadRequestError from '../../../errors/BadRequestError'
 import NotFoundError from '../../../errors/NotFoundError'
 import ConflictError from '../../../errors/ConflictError'
-import User from '../../../entity/user/User'
-import UserRoomLevel from '../../../entity/userRoom/UserRoomLevel'
-import UserRoomStatus from '../../../entity/userRoom/UserRoomStatus'
+import User from '../../../entities/user/User'
+import UserRoomLevel from '../../../entities/userRoom/UserRoomLevel'
+import UserRoomStatus from '../../../entities/userRoom/UserRoomStatus'
 
 type Payload = {
   user: User

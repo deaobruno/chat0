@@ -4,7 +4,6 @@ import IEvents from '../events/IEvents'
 import IGetRoomsByUserIdUseCase from '../useCases/room/IGetRoomsByUserIdUseCase'
 import IAuthenticateUseCase from '../useCases/auth/IAuthenticateUseCase'
 import BaseError from '../errors/BaseError'
-import User from '../entity/user/User'
 
 type SocketConfig = {
   server: Server

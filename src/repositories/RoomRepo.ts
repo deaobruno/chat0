@@ -1,5 +1,5 @@
 import { DataSource } from 'typeorm'
-import Room from '../entity/room/Room'
+import Room from '../entities/room/Room'
 
 export default (db: DataSource) => db
   .getRepository(Room)

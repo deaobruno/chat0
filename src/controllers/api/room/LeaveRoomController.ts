@@ -4,7 +4,7 @@ import IRequest from '../../IRequest'
 import IResponse from '../../IResponse'
 import BadRequestError from '../../../errors/BadRequestError'
 import NotFoundError from '../../../errors/NotFoundError'
-import User from '../../../entity/user/User'
+import User from '../../../entities/user/User'
 
 type Payload = {
   user: User

@@ -4,11 +4,11 @@ import IUserRoomRepo from '../../../repositories/IUserRoomRepo'
 import IRequest from '../../IRequest'
 import IResponse from '../../IResponse'
 import BadRequestError from '../../../errors/BadRequestError'
-import User from '../../../entity/user/User'
-import RoomType from '../../../entity/room/RoomType'
-import RoomStatus from '../../../entity/room/RoomStatus'
-import UserRoomLevel from '../../../entity/userRoom/UserRoomLevel'
-import UserRoomStatus from '../../../entity/userRoom/UserRoomStatus'
+import User from '../../../entities/user/User'
+import RoomType from '../../../entities/room/RoomType'
+import RoomStatus from '../../../entities/room/RoomStatus'
+import UserRoomLevel from '../../../entities/userRoom/UserRoomLevel'
+import UserRoomStatus from '../../../entities/userRoom/UserRoomStatus'
 
 type Payload = {
   user: User
