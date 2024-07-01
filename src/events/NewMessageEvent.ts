@@ -21,12 +21,12 @@ type NewMessageEventInput = {
   author: string
 }
 
-export default (config: NewMessageEventConfig): IEvent => {
-  const {
-    hash,
-    messageRepo,
-  } = config
-  const trigger = async (input: NewMessageEventInput) => {
+export default (config: NewMessageEventConfig): IEvent =>
+  async (input: NewMessageEventInput) => {
+    const {
+      hash,
+      messageRepo,
+    } = config
     const { userId, message, author } = input
     const { roomId, text, time } = message
   
@@ -41,8 +41,3 @@ export default (config: NewMessageEventConfig): IEvent => {
       status: MessageStatus.SENT,
     })
   }
-
-  return {
-    trigger,
-  }
-}

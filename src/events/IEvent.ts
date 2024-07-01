@@ -1,5 +1,3 @@
-type IEvent = {
-  trigger(data?: object): void;
-}
+type IEvent = (data?: any) => void | Promise<void>
 
 export default IEvent

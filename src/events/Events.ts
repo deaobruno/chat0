@@ -5,9 +5,9 @@ const eventEmitter = new EventEmitter()
 
 export default () => {
   const subscribe = (topic: string, event: IEvent): void => {
-    eventEmitter.on(topic, (data?: object) => {
+    eventEmitter.on(topic, async (data?: object) => {
       try {
-        event.trigger(data)
+        await event(data)
       } catch (error) {
         console.log(`[${topic}]: ${error}`)
       }
