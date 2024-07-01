@@ -24,10 +24,11 @@ import LeaveRoomController from './controllers/api/room/LeaveRoomController'
 import NewMessageEvent from './events/NewMessageEvent'
 import GetRoomsByUserIdUseCase from './useCases/room/GetRoomsByUserIdUseCase'
 import AuthenticateUseCase from './useCases/auth/AuthenticateUseCase'
+import LoginUseCase from './useCases/auth/LoginUseCase'
 
 // Drivers
 const db = Db({
-  host: 'localhost',
+  host: '0.0.0.0',
   port: 27017,
   database: 'chat0',
 })
@@ -40,6 +41,10 @@ const roomRepo = RoomRepo(db)
 const userRoomRepo = UserRoomRepo(db)
 const messageRepo = MessageRepo(db)
 // Use Cases
+const loginUseCase = LoginUseCase({
+  encryption,
+  userRepo,
+})
 const authenticateUseCase = AuthenticateUseCase({
   encryption,
   userRepo,
@@ -58,7 +63,7 @@ const createRoomController = CreateRoomController()
 const notFoundController = NotFoundController()
 const errorController = ErrorController()
 const registerController = RegisterController(hash, encryption, userRepo)
-const loginController = LoginController(encryption, userRepo)
+const loginController = LoginController(loginUseCase)
 const logoutController = LogoutController(userRepo)
 const insertRoomController = InsertRoomController(hash, roomRepo, userRoomRepo)
 const findRoomsByTitleController = FindRoomsByTitleController(roomRepo)
