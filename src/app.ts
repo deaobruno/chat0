@@ -28,6 +28,7 @@ import LoginUseCase from './useCases/auth/LoginUseCase'
 import LogoutUseCase from './useCases/auth/LogoutUseCase'
 import RegisterUseCase from './useCases/auth/RegisterUseCase'
 import FindRoomsByTitleUseCase from './useCases/room/FindRoomsByTitleUseCase'
+import InsertRoomUseCase from './useCases/room/InsertRoomUseCase'
 
 // Drivers
 const db = Db({
@@ -60,13 +61,18 @@ const authenticateUseCase = AuthenticateUseCase({
   encryption,
   userRepo,
 })
-const getRoomByUserIdUseCase = GetRoomsByUserIdUseCase({
+const insertRoomUseCase = InsertRoomUseCase({
+  hash,
   roomRepo,
   userRoomRepo,
-  messageRepo,
 })
 const findRoomsByTitleUseCase = FindRoomsByTitleUseCase({
   roomRepo,
+})
+const getRoomsByUserIdUseCase = GetRoomsByUserIdUseCase({
+  roomRepo,
+  userRoomRepo,
+  messageRepo,
 })
 // Middlewares
 const authenticationMiddleware = AuthenticationMiddleware(authenticateUseCase)
@@ -79,7 +85,7 @@ const errorController = ErrorController()
 const registerController = RegisterController(registerUseCase)
 const loginController = LoginController(loginUseCase)
 const logoutController = LogoutController(logoutUseCase)
-const insertRoomController = InsertRoomController(hash, roomRepo, userRoomRepo)
+const insertRoomController = InsertRoomController(insertRoomUseCase)
 const findRoomsByTitleController = FindRoomsByTitleController(findRoomsByTitleUseCase)
 const joinRoomController = JoinRoomController(hash, roomRepo, userRoomRepo)
 const leaveRoomController = LeaveRoomController(roomRepo, userRoomRepo)
@@ -108,7 +114,7 @@ Socket({
   server,
   events,
   authenticateUseCase,
-  getRoomByUserIdUseCase,
+  getRoomsByUserIdUseCase,
 })
 
 events.subscribe('newMessage', newMessageEvent)

@@ -1,14 +1,7 @@
-import IHash from '../../../hash/IHash'
-import IRoomRepo from '../../../repositories/IRoomRepo'
-import IUserRoomRepo from '../../../repositories/IUserRoomRepo'
+import IInsertRoomUseCase from '../../../useCases/room/IInsertRoomUseCase'
+import User from '../../../entities/user/User'
 import IRequest from '../../IRequest'
 import IResponse from '../../IResponse'
-import BadRequestError from '../../../errors/BadRequestError'
-import User from '../../../entities/user/User'
-import RoomType from '../../../entities/room/RoomType'
-import RoomStatus from '../../../entities/room/RoomStatus'
-import UserRoomLevel from '../../../entities/userRoom/UserRoomLevel'
-import UserRoomStatus from '../../../entities/userRoom/UserRoomStatus'
 
 type Payload = {
   user: User
@@ -17,34 +10,12 @@ type Payload = {
   type: string
 }
 
-export default (hash: IHash, roomRepo: IRoomRepo, userRoomRepo: IUserRoomRepo) =>
+export default (insertRoomUseCase: IInsertRoomUseCase) =>
   async (request: IRequest<Payload>): Promise<IResponse> => {
-    const { payload: { user, title, description, type } } = request
+    const { payload } = request
+    const result = await insertRoomUseCase(payload)
 
-    if (!title || typeof title !== 'string') return BadRequestError('Invalid "title"')
-    if (!description || typeof description !== 'string') return BadRequestError('Invalid "description"')
-    if (!type || !['DIRECT', 'GROUP'].includes(type)) return BadRequestError('Invalid "type"')
-
-    const { userId } = user
-    const roomId = hash.generateUuid()
-
-    await roomRepo.insert({
-      roomId,
-      title,
-      description,
-      type: RoomType[type as keyof typeof RoomType],
-      status: RoomStatus.ACTIVE,
-    })
-
-    const userRoomId = hash.generateUuid()
-
-    await userRoomRepo.insert({
-      userRoomId,
-      userId,
-      roomId,
-      level: UserRoomLevel.ADMIN,
-      status: UserRoomStatus.OK,
-    })
+    if (result && result.statusCode) return result
 
     return {
       type: 'json',

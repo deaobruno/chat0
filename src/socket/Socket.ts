@@ -9,7 +9,7 @@ type SocketConfig = {
   server: Server
   events: IEvents
   authenticateUseCase: IAuthenticateUseCase
-  getRoomByUserIdUseCase: IGetRoomsByUserIdUseCase
+  getRoomsByUserIdUseCase: IGetRoomsByUserIdUseCase
 }
 
 type Message = {
@@ -23,7 +23,7 @@ export default (config: SocketConfig) => {
     server,
     events,
     authenticateUseCase,
-    getRoomByUserIdUseCase,
+    getRoomsByUserIdUseCase,
   } = config
   const io = new socketIo.Server(server)
 
@@ -53,7 +53,7 @@ export default (config: SocketConfig) => {
             socket.to(message.roomId).emit('receivedMessage', message)
           })
           .on('getRoomsUpdate', async () => {
-            const rooms = await getRoomByUserIdUseCase(userId)
+            const rooms = await getRoomsByUserIdUseCase(userId)
 
             rooms.forEach(room => socket.join(room.roomId))
             socket.emit('updateRooms', rooms)
