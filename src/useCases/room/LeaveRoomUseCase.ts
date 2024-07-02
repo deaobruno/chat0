@@ -31,4 +31,8 @@ export default (config: UseCaseConfig): IJoinRoomUseCase =>
     if (!userInRoom) return BadRequestError('User is not in room')
 
     await userRoomRepo.delete({ userId, roomId })
+
+    const roomUsers = await userRoomRepo.findByRoomId(roomId)
+
+    if (roomUsers.length < 1) await roomRepo.delete({ roomId })
   }
