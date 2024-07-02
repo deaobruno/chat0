@@ -38,5 +38,5 @@ export default (config: UseCaseConfig): ILoginUseCase =>
 
     await userRepo.update({ userId }, { isLogged: true })
 
-    return { url: `http://localhost:8081/users/rooms` }
+    return { url: '/users/rooms' }
   }

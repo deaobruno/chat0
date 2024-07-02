@@ -1,21 +1,24 @@
 import User from '../../../entities/user/User'
-import IUserRepo from '../../../repositories/IUserRepo'
+import ILogoutUseCase from '../../../useCases/auth/ILogoutUseCase'
 import IRequest from '../../IRequest'
 import IResponse from '../../IResponse'
+import BaseError from '../../../errors/BaseError'
 
 type Payload = {
   user: User
 }
 
-export default (userRepo: IUserRepo) =>
+export default (logoutUseCase: ILogoutUseCase) =>
   async (request: IRequest<Payload>): Promise<IResponse> => {
-    const { user: { userId} } = request.payload
+    const { payload } = request
+    const result = await logoutUseCase(payload)
+    const { statusCode } = result as BaseError
 
-    await userRepo.update({ userId }, { isLogged: false })
+    if (statusCode) return result as BaseError
 
     return {
       type: 'json',
       statusCode: 200,
-      data: { url: `/` },
+      data: result,
     }
   }

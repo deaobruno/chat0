@@ -1,5 +1,5 @@
-import BaseError from '../../errors/BaseError'
 import IUseCase from '../IUseCase'
+import BaseError from '../../errors/BaseError'
 
 type Input = {
   username: string
