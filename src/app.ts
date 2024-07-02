@@ -30,6 +30,7 @@ import RegisterUseCase from './useCases/auth/RegisterUseCase'
 import FindRoomsByTitleUseCase from './useCases/room/FindRoomsByTitleUseCase'
 import InsertRoomUseCase from './useCases/room/InsertRoomUseCase'
 import JoinRoomUseCase from './useCases/room/JoinRoomUseCase'
+import LeaveRoomUseCase from './useCases/room/LeaveRoomUseCase'
 
 // Drivers
 const db = Db({
@@ -80,6 +81,10 @@ const getRoomsByUserIdUseCase = GetRoomsByUserIdUseCase({
   userRoomRepo,
   messageRepo,
 })
+const leaveRoomUseCase = LeaveRoomUseCase({
+  roomRepo,
+  userRoomRepo,
+})
 // Middlewares
 const authenticationMiddleware = AuthenticationMiddleware(authenticateUseCase)
 // Controllers
@@ -94,7 +99,7 @@ const logoutController = LogoutController(logoutUseCase)
 const insertRoomController = InsertRoomController(insertRoomUseCase)
 const findRoomsByTitleController = FindRoomsByTitleController(findRoomsByTitleUseCase)
 const joinRoomController = JoinRoomController(joinRoomUseCase)
-const leaveRoomController = LeaveRoomController(roomRepo, userRoomRepo)
+const leaveRoomController = LeaveRoomController(leaveRoomUseCase)
 // Events
 const newMessageEvent = NewMessageEvent({
   hash,
