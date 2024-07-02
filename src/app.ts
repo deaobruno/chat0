@@ -26,6 +26,7 @@ import GetRoomsByUserIdUseCase from './useCases/room/GetRoomsByUserIdUseCase'
 import AuthenticateUseCase from './useCases/auth/AuthenticateUseCase'
 import LoginUseCase from './useCases/auth/LoginUseCase'
 import LogoutUseCase from './useCases/auth/LogoutUseCase'
+import RegisterUseCase from './useCases/auth/RegisterUseCase'
 
 // Drivers
 const db = Db({
@@ -42,6 +43,11 @@ const roomRepo = RoomRepo(db)
 const userRoomRepo = UserRoomRepo(db)
 const messageRepo = MessageRepo(db)
 // Use Cases
+const registerUseCase = RegisterUseCase({
+  hash,
+  encryption,
+  userRepo,
+})
 const loginUseCase = LoginUseCase({
   encryption,
   userRepo,
@@ -66,7 +72,7 @@ const userRoomsController = UserRoomsController()
 const createRoomController = CreateRoomController()
 const notFoundController = NotFoundController()
 const errorController = ErrorController()
-const registerController = RegisterController(hash, encryption, userRepo)
+const registerController = RegisterController(registerUseCase)
 const loginController = LoginController(loginUseCase)
 const logoutController = LogoutController(logoutUseCase)
 const insertRoomController = InsertRoomController(hash, roomRepo, userRoomRepo)
