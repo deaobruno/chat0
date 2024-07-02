@@ -2,7 +2,7 @@ import { DataSource } from 'typeorm'
 import UserRoom from '../entities/userRoom/UserRoom'
 
 export default (db: DataSource) => db
-  .getRepository(UserRoom)
+  .getMongoRepository(UserRoom)
   .extend({
     findByUserId(userId: string) {
       return this.find({ where: { userId } })

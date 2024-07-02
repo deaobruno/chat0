@@ -2,7 +2,7 @@ import { DataSource } from 'typeorm'
 import User from '../entities/user/User'
 
 export default (db: DataSource) => db
-  .getRepository(User)
+  .getMongoRepository(User)
   .extend({
     findOneByUserId(userId: string) {
       return this.findOne({ where: { userId } })

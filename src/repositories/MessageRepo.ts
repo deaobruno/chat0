@@ -2,7 +2,7 @@ import { DataSource } from 'typeorm'
 import Message from '../entities/message/Message'
 
 export default (db: DataSource) => db
-  .getRepository(Message)
+  .getMongoRepository(Message)
   .extend({
     findLastMessagesByRoomId(roomId: string, skip = 0) {
       const take = 10
