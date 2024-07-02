@@ -93,8 +93,23 @@ button {
   padding: 10px;
 }
 
-#leave_active_room {
+#active_room_image {
+  height: 100%;
+  width: 5%;
+  float: left;
+}
+
+#active_room_title {
+  height: 100%;
+  width: 85%;
+  float: left;
+}
+
+#leave_active_room, #delete_active_room {
   display: none;
+  height: 100%;
+  width: 5%;
+  float: left;
 }
 
 #messages {

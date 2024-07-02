@@ -116,6 +116,7 @@ $(document).on('click', '.room', event => {
   $('#active_room').val(roomId)
   $('#active_room_title').html(`<strong>${title}</strong>`)
   $('#leave_active_room').css('display', 'block')
+  $('#delete_active_room').css('display', 'block')
   $('#messages').empty()
 
   messages.forEach(message => $('#messages')
@@ -139,6 +140,32 @@ $('#leave_active_room').on('click', event => {
       $('#active_room').val('')
       $('#active_room_title').html('')
       $('#leave_active_room').css('display', 'none')
+      $('#delete_active_room').css('display', 'none')
+      $('#messages').empty()
+      socket.emit('getRoomsUpdate')
+    },
+    error: response => console.log(response),
+  })
+})
+
+$('#delete_active_room').on('click', event => {
+  event.preventDefault()
+
+  const roomId = $('#active_room').val()
+
+  if (!roomId) return alert('roomId is missing')
+
+  request.delete({
+    url: `http://localhost:8081/rooms/${roomId}`,
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: auth,
+    },
+    success: () => {
+      $('#active_room').val('')
+      $('#active_room_title').html('')
+      $('#leave_active_room').css('display', 'none')
+      $('#delete_active_room').css('display', 'none')
       $('#messages').empty()
       socket.emit('getRoomsUpdate')
     },
