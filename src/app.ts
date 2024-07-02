@@ -112,6 +112,8 @@ const deleteRoomController = DeleteRoomController(deleteRoomUseCase)
 // Events
 const newMessageEvent = NewMessageEvent({
   hash,
+  roomRepo,
+  userRoomRepo,
   messageRepo,
 })
 // Servers
