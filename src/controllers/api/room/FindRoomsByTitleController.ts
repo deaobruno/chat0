@@ -1,24 +1,23 @@
-import IRoomRepo from '../../../repositories/IRoomRepo'
+import IFindRoomsByTitleUseCase from '../../../useCases/room/IFindRoomsByTitleUseCase'
 import IRequest from '../../IRequest'
 import IResponse from '../../IResponse'
-import BadRequestError from '../../../errors/BadRequestError'
+import BaseError from '../../../errors/BaseError'
 
 type Payload = {
   title: string
 }
 
-export default (roomRepo: IRoomRepo) =>
+export default (findRoomsByTitleUseCase: IFindRoomsByTitleUseCase) =>
   async (request: IRequest<Payload>): Promise<IResponse> => {
-    const { payload: { title } } = request
+    const { payload } = request
+    const result = await findRoomsByTitleUseCase(payload)
+    const { statusCode } = result as BaseError
 
-    if (title.length < 3 || title.length > 50)
-      return BadRequestError('Invalid title')
-
-    const rooms = await roomRepo.findByTitle(title)
+    if (statusCode) return result as BaseError
 
     return {
       type: 'json',
       statusCode: 200,
-      data: { rooms }
+      data: result,
     }
   }
