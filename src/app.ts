@@ -33,6 +33,7 @@ import JoinRoomUseCase from './useCases/room/JoinRoomUseCase'
 import LeaveRoomUseCase from './useCases/room/LeaveRoomUseCase'
 import DeleteRoomUseCase from './useCases/room/DeleteRoomUseCase'
 import DeleteRoomController from './controllers/api/room/DeleteRoomController'
+import CreateMessageUseCase from './useCases/message/CreateMessageUseCase'
 
 // Drivers
 const db = Db({
@@ -93,6 +94,12 @@ const deleteRoomUseCase = DeleteRoomUseCase({
   userRoomRepo,
   messageRepo,
 })
+const createMessageUseCase = CreateMessageUseCase({
+  hash,
+  roomRepo,
+  userRoomRepo,
+  messageRepo,
+})
 // Middlewares
 const authenticationMiddleware = AuthenticationMiddleware(authenticateUseCase)
 // Controllers
@@ -110,12 +117,7 @@ const joinRoomController = JoinRoomController(joinRoomUseCase)
 const leaveRoomController = LeaveRoomController(leaveRoomUseCase)
 const deleteRoomController = DeleteRoomController(deleteRoomUseCase)
 // Events
-const newMessageEvent = NewMessageEvent({
-  hash,
-  roomRepo,
-  userRoomRepo,
-  messageRepo,
-})
+const newMessageEvent = NewMessageEvent(createMessageUseCase)
 // Servers
 const server = Server({
   authenticationMiddleware,

@@ -49,7 +49,11 @@ export default (config: SocketConfig) => {
 
         socket
           .on('newMessage', (message: Message) => {
-            events.publish('newMessage', { userId, message, author: username })
+            const { roomId, text, time } = message
+            events.publish(
+              'newMessage',
+              { roomId, userId, author: username, text, time }
+            )
             socket.to(message.roomId).emit('receivedMessage', message)
           })
           .on('getRoomsUpdate', async () => {

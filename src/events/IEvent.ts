@@ -1,3 +1,3 @@
-type IEvent = (data?: any) => void | Promise<void>
+type IEvent<T = any, U = void> = (data: T) => U
 
 export default IEvent
