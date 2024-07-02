@@ -2,6 +2,7 @@ import IJoinRoomUseCase from './IJoinRoomUseCase'
 import User from '../../entities/user/User'
 import IRoomRepo from '../../repositories/IRoomRepo'
 import IUserRoomRepo from '../../repositories/IUserRoomRepo'
+import IMessageRepo from '../../repositories/IMessageRepo'
 import BaseError from '../../errors/BaseError'
 import BadRequestError from '../../errors/BadRequestError'
 import NotFoundError from '../../errors/NotFoundError'
@@ -9,6 +10,7 @@ import NotFoundError from '../../errors/NotFoundError'
 type UseCaseConfig = {
   roomRepo: IRoomRepo
   userRoomRepo: IUserRoomRepo
+  messageRepo: IMessageRepo
 }
 
 type Input = {
@@ -18,7 +20,7 @@ type Input = {
 
 export default (config: UseCaseConfig): IJoinRoomUseCase =>
   async (input: Input): Promise<void | BaseError> => {
-    const { roomRepo, userRoomRepo } = config
+    const { roomRepo, userRoomRepo, messageRepo } = config
     const { user: { userId }, roomId } = input
     const room = await roomRepo.findOneByRoomId(roomId)
 
@@ -34,5 +36,8 @@ export default (config: UseCaseConfig): IJoinRoomUseCase =>
 
     const roomUsers = await userRoomRepo.findByRoomId(roomId)
 
-    if (roomUsers.length < 1) await roomRepo.delete({ roomId })
+    if (roomUsers.length > 0) return
+
+    await messageRepo.delete({ roomId })
+    await roomRepo.delete({ roomId })
   }
