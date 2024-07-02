@@ -31,6 +31,8 @@ import FindRoomsByTitleUseCase from './useCases/room/FindRoomsByTitleUseCase'
 import InsertRoomUseCase from './useCases/room/InsertRoomUseCase'
 import JoinRoomUseCase from './useCases/room/JoinRoomUseCase'
 import LeaveRoomUseCase from './useCases/room/LeaveRoomUseCase'
+import DeleteRoomUseCase from './useCases/room/DeleteRoomUseCase'
+import DeleteRoomController from './controllers/api/room/DeleteRoomController'
 
 // Drivers
 const db = Db({
@@ -84,6 +86,12 @@ const getRoomsByUserIdUseCase = GetRoomsByUserIdUseCase({
 const leaveRoomUseCase = LeaveRoomUseCase({
   roomRepo,
   userRoomRepo,
+  messageRepo,
+})
+const deleteRoomUseCase = DeleteRoomUseCase({
+  roomRepo,
+  userRoomRepo,
+  messageRepo,
 })
 // Middlewares
 const authenticationMiddleware = AuthenticationMiddleware(authenticateUseCase)
@@ -100,6 +108,7 @@ const insertRoomController = InsertRoomController(insertRoomUseCase)
 const findRoomsByTitleController = FindRoomsByTitleController(findRoomsByTitleUseCase)
 const joinRoomController = JoinRoomController(joinRoomUseCase)
 const leaveRoomController = LeaveRoomController(leaveRoomUseCase)
+const deleteRoomController = DeleteRoomController(deleteRoomUseCase)
 // Events
 const newMessageEvent = NewMessageEvent({
   hash,
@@ -120,6 +129,7 @@ const server = Server({
   findRoomsByTitleController,
   joinRoomController,
   leaveRoomController,
+  deleteRoomController,
 })
 Socket({
   server,
