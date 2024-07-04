@@ -1,0 +1,12 @@
+export default {
+  http: {
+    port: 8080,
+  },
+  db: {
+    mongo: {
+      host: '0.0.0.0',
+      port: 27017,
+      database: 'chat0',
+    }
+  }
+}

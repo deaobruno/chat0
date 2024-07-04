@@ -3,11 +3,10 @@ import { join } from 'node:path'
 import express, { NextFunction, Request, Response, Router, json, urlencoded } from 'express'
 import favicon from 'serve-favicon'
 import ejs from 'ejs'
-import Routes from '../routes/Routes'
 import IController from '../controllers/IController'
 import InternalServerError from '../errors/InternalServerError'
 
-export default (dependencies: any) => {
+export default (port: string | number, dependencies: any) => {
   const { notFoundController, errorController } = dependencies
   const app = express()
   const expressRouter = Router()
@@ -57,8 +56,6 @@ export default (dependencies: any) => {
       expressRouter.delete(url, handleRequest(controller)),
   }
 
-  Routes(dependencies, router)
-
   app.use(json())
   app.use(urlencoded({ extended: false }))
   app.use(express.static(publicDir))
@@ -70,5 +67,14 @@ export default (dependencies: any) => {
   app.use(handleRequest(notFoundController))
   app.use(handleRequest(errorController))
 
-  return server
+  const start = () => 
+    server.listen(port, () => console.log('[Server] HTTP server started'))
+  const stop = () => server.close(() => '[Server] HTTP server stopped')
+
+  return {
+    server,
+    router,
+    start,
+    stop,
+  }
 }

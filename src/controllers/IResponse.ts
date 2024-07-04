@@ -1,7 +1,7 @@
-type IResponse = {
+type IResponse<Response = any> = {
   type: string
   statusCode: number
-  data?: object
+  data?: Response
   path?: string
 }
 

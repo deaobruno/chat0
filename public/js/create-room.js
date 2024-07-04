@@ -10,7 +10,7 @@ $('#create_room').submit(event => {
   if (!title || !description || !type) return alert('title, description and type are needed')
 
   request.post({
-    url: 'http://localhost:8081/rooms',
+    url: 'http://localhost:8080/rooms',
     headers: {
       'Content-Type': 'application/json',
       Authorization: auth,

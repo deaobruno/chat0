@@ -1,17 +1,7 @@
+import dependenciesContainer from '../dependencies'
 import IRouter from './IRouter'
-import IMiddleware from '../middlewares/IMiddleware'
-import IController from '../controllers/IController'
 
-type Dependencies = {
-  authenticationMiddleware: IMiddleware
-  insertRoomController: IController
-  findRoomsByTitleController: IController
-  joinRoomController: IController
-  leaveRoomController: IController
-  deleteRoomController: IController
-}
-
-export default (dependencies: Dependencies, router: IRouter) => {
+export default (dependencies: typeof dependenciesContainer, router: IRouter) => {
   const {
     authenticationMiddleware,
     insertRoomController,

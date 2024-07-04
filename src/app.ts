@@ -1,8 +1,9 @@
 import dependencies from './dependencies'
+import Routes from './routes/Routes'
 
 const {
-  server,
-  db,
+  httpServer,
+  dbDriver,
   events,
   newMessageEvent
 } = dependencies
@@ -10,8 +11,9 @@ const {
 ;(async () => {
   try {
     events.subscribe('newMessage', newMessageEvent)
-    await db.initialize()
-    server.listen(8081, () => console.log('[Server] HTTP server started'))
+    Routes(dependencies, httpServer.router)
+    await dbDriver.start()
+    httpServer.start()
   } catch (error) {
     console.log(error)
   }

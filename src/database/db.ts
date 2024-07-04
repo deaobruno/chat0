@@ -15,8 +15,7 @@ type DbConfig = {
 
 export default (config: DbConfig) => {
   const { host, port, username, password, database } = config
-
-  return new DataSource({
+  const db = new DataSource({
     type: 'mongodb',
     host,
     port,
@@ -30,4 +29,12 @@ export default (config: DbConfig) => {
     migrations: [],
     subscribers: [],
   })
+  const start = async () => db.initialize()
+  const stop = async () => db.destroy()
+
+  return {
+    db,
+    start,
+    stop,
+  }
 }

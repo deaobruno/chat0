@@ -8,7 +8,7 @@ $('#register').submit(event => {
   if (!email || !username || !password) return alert('email, username and password are needed')
 
   request.post({
-    url: 'http://localhost:8081/auth/register',
+    url: 'http://localhost:8080/auth/register',
     headers: {
       'Content-Type': 'application/json',
     },
@@ -35,7 +35,7 @@ $('#login').submit(event => {
   if (!username || !password) return alert('username and password are needed')
 
   request.post({
-    url: 'http://localhost:8081/auth/login',
+    url: 'http://localhost:8080/auth/login',
     headers: {
       'Content-Type': 'application/json',
     },

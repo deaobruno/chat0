@@ -12,7 +12,7 @@ const renderMessage = (message) => {
 }
 const username = localStorage.getItem('uUn')
 let userRooms = []
-const socket = io('http://localhost:8081', {
+const socket = io('http://localhost:8080', {
   auth: {
     token: auth
   },
@@ -60,7 +60,7 @@ $('#search_room_title').on('keyup', event => {
   if (search.length < 3 || search.length > 50) return
 
   request.get({
-    url: `http://localhost:8081/rooms/title/${search}`,
+    url: `http://localhost:8080/rooms/title/${search}`,
     headers: {
       'Content-Type': 'application/json',
       Authorization: auth,
@@ -85,7 +85,7 @@ $('#join_room').on('click', event => {
   if (!roomTitle || !roomId) return
 
   request.post({
-    url: `http://localhost:8081/rooms/${roomId}/join`,
+    url: `http://localhost:8080/rooms/${roomId}/join`,
     headers: {
       'Content-Type': 'application/json',
       Authorization: auth,
@@ -101,7 +101,7 @@ $('#join_room').on('click', event => {
 $('#new_room, #create_room').click(event => {
   event.preventDefault()
 
-  window.location.href = 'http://localhost:8081/create-room'
+  window.location.href = 'http://localhost:8080/create-room'
 })
 
 $('#logout').click(logout)
@@ -131,7 +131,7 @@ $('#leave_active_room').on('click', event => {
   if (!roomId) return alert('roomId is missing')
 
   request.delete({
-    url: `http://localhost:8081/rooms/${roomId}/leave`,
+    url: `http://localhost:8080/rooms/${roomId}/leave`,
     headers: {
       'Content-Type': 'application/json',
       Authorization: auth,
@@ -156,7 +156,7 @@ $('#delete_active_room').on('click', event => {
   if (!roomId) return alert('roomId is missing')
 
   request.delete({
-    url: `http://localhost:8081/rooms/${roomId}`,
+    url: `http://localhost:8080/rooms/${roomId}`,
     headers: {
       'Content-Type': 'application/json',
       Authorization: auth,

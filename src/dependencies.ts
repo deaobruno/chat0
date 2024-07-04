@@ -1,3 +1,4 @@
+import config from './config'
 import Crypto from './hash/Crypto'
 import Bcrypt from './encryption/Bcrypt'
 import Db from './database/Db'
@@ -8,6 +9,17 @@ import UserRepo from './repositories/UserRepo'
 import RoomRepo from './repositories/RoomRepo'
 import UserRoomRepo from './repositories/UserRoomRepo'
 import MessageRepo from './repositories/MessageRepo'
+import GetRoomsByUserIdUseCase from './useCases/room/GetRoomsByUserIdUseCase'
+import AuthenticateUseCase from './useCases/auth/AuthenticateUseCase'
+import LoginUseCase from './useCases/auth/LoginUseCase'
+import LogoutUseCase from './useCases/auth/LogoutUseCase'
+import RegisterUseCase from './useCases/auth/RegisterUseCase'
+import FindRoomsByTitleUseCase from './useCases/room/FindRoomsByTitleUseCase'
+import InsertRoomUseCase from './useCases/room/InsertRoomUseCase'
+import JoinRoomUseCase from './useCases/room/JoinRoomUseCase'
+import LeaveRoomUseCase from './useCases/room/LeaveRoomUseCase'
+import DeleteRoomUseCase from './useCases/room/DeleteRoomUseCase'
+import CreateMessageUseCase from './useCases/message/CreateMessageUseCase'
 import HomeController from './controllers/web/HomeController'
 import UserRoomsController from './controllers/web/UserRoomsController'
 import CreateRoomController from './controllers/web/CreateRoomController'
@@ -21,26 +33,12 @@ import InsertRoomController from './controllers/api/room/InsertRoomController'
 import FindRoomsByTitleController from './controllers/api/room/FindRoomsByTitleController'
 import JoinRoomController from './controllers/api/room/JoinRoomController'
 import LeaveRoomController from './controllers/api/room/LeaveRoomController'
-import NewMessageEvent from './events/NewMessageEvent'
-import GetRoomsByUserIdUseCase from './useCases/room/GetRoomsByUserIdUseCase'
-import AuthenticateUseCase from './useCases/auth/AuthenticateUseCase'
-import LoginUseCase from './useCases/auth/LoginUseCase'
-import LogoutUseCase from './useCases/auth/LogoutUseCase'
-import RegisterUseCase from './useCases/auth/RegisterUseCase'
-import FindRoomsByTitleUseCase from './useCases/room/FindRoomsByTitleUseCase'
-import InsertRoomUseCase from './useCases/room/InsertRoomUseCase'
-import JoinRoomUseCase from './useCases/room/JoinRoomUseCase'
-import LeaveRoomUseCase from './useCases/room/LeaveRoomUseCase'
-import DeleteRoomUseCase from './useCases/room/DeleteRoomUseCase'
 import DeleteRoomController from './controllers/api/room/DeleteRoomController'
-import CreateMessageUseCase from './useCases/message/CreateMessageUseCase'
+import NewMessageEvent from './events/NewMessageEvent'
 
 // Drivers
-const db = Db({
-  host: '0.0.0.0',
-  port: 27017,
-  database: 'chat0',
-})
+const dbDriver = Db(config.db.mongo)
+const { db } = dbDriver
 const hash = Crypto()
 const encryption = Bcrypt()
 const events = Events()
@@ -119,7 +117,7 @@ const deleteRoomController = DeleteRoomController(deleteRoomUseCase)
 // Events
 const newMessageEvent = NewMessageEvent(createMessageUseCase)
 // Servers
-const server = Server({
+const httpServer = Server(config.http.port, {
   authenticationMiddleware,
   homeController,
   userRoomsController,
@@ -135,6 +133,7 @@ const server = Server({
   leaveRoomController,
   deleteRoomController,
 })
+const { server } = httpServer
 Socket({
   server,
   events,
@@ -143,8 +142,22 @@ Socket({
 })
 
 export default {
-  server,
-  db,
+  httpServer,
+  dbDriver,
   events,
+  authenticationMiddleware,
+  homeController,
+  userRoomsController,
+  createRoomController,
+  notFoundController,
+  errorController,
+  registerController,
+  loginController,
+  logoutController,
+  insertRoomController,
+  findRoomsByTitleController,
+  joinRoomController,
+  leaveRoomController,
+  deleteRoomController,
   newMessageEvent,
 }

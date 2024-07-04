@@ -1,6 +1,6 @@
 import { IncomingHttpHeaders } from 'node:http'
 
-type IRequest<Payload = unknown, Headers = IncomingHttpHeaders> = {
+type IRequest<Payload = any, Headers = IncomingHttpHeaders> = {
   payload: Payload
   headers: Headers
 }
