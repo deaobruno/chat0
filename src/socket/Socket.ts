@@ -66,4 +66,7 @@ export default (config: SocketConfig) => {
         io.close(() => console.log(`[Socket] ${error}`))
       }
     })
+    .on('close', () => console.log('[Socket] Ended connection'))
+
+    console.log('[Socket] Started connection')
   }
