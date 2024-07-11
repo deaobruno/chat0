@@ -1,5 +1,5 @@
 import dependencies from './dependencies'
-import Routes from './routes/Routes'
+import Routes from './infra/routes/Routes'
 
 const {
   httpServer,
