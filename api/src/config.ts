@@ -4,7 +4,7 @@ export default {
   },
   db: {
     mongo: {
-      host: '0.0.0.0',
+      host: 'mongo',
       port: 27017,
       database: 'chat0',
     }

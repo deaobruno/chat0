@@ -101,7 +101,7 @@ $('#join_room').on('click', event => {
 $('#new_room, #create_room').click(event => {
   event.preventDefault()
 
-  window.location.href = 'http://localhost:8082/create-room'
+  window.location.href = '/create-room'
 })
 
 $('#logout').click(logout)
