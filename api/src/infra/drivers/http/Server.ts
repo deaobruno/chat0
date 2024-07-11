@@ -21,7 +21,9 @@ export default (port: string | number) => {
 
         if (statusCode >= 400) return next(response)
 
-        res.status(statusCode).json(data ?? { message: STATUS_CODES[statusCode] })
+        res
+          .status(statusCode)
+          .json(data ?? { message: STATUS_CODES[statusCode] })
       } catch (error) {
         next(error)
       }
