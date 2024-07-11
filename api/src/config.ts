@@ -1,12 +1,16 @@
+import { config } from 'dotenv-safe'
+
+config()
+
 export default {
   http: {
-    port: 8082,
+    port: `${process.env.HTTP_PORT}`,
   },
   db: {
     mongo: {
-      host: 'mongo',
-      port: 27017,
-      database: 'chat0',
-    }
-  }
+      host: `${process.env.MONGO_DB_HOST}`,
+      port: parseInt(`${process.env.MONGO_DB_PORT}`),
+      database: `${process.env.MONGO_DB_DATABASE}`,
+    },
+  },
 }
