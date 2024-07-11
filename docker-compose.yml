@@ -8,6 +8,8 @@ services:
     volumes:
       - ./web/:/usr/web
       - /usr/web/node_modules
+    environment:
+      - HTTP_PORT=8081
 
   api:
     build:

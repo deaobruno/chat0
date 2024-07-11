@@ -3,6 +3,7 @@ import { join } from 'node:path'
 import express, { NextFunction, Request, Response } from 'express'
 import favicon from 'serve-favicon'
 import ejs from 'ejs'
+import config from './config'
 
 const app = express()
 const server = createServer(app)
@@ -27,7 +28,7 @@ app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
   res.status(500).render('error.html')
 })
 
-const port = 8081
+const { port } = config.http
 const httpServer = server
   .listen(port, () => {
     const serverAddress = httpServer.address()
