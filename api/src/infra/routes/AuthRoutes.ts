@@ -11,5 +11,5 @@ export default (dependencies: typeof dependenciesContainer, router: IRouter) => 
 
   router.post('/auth/register', registerController)
   router.post('/auth/login', loginController)
-  router.post('/auth/logout', authenticationMiddleware(logoutController))
+  router.post('/auth/logout', authenticationMiddleware, logoutController)
 }

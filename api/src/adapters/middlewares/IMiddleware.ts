@@ -1,7 +1,6 @@
-import IController from '../controllers/IController'
+import BaseError from '../../application/errors/BaseError'
 import IRequest from '../controllers/IRequest'
-import IResponse from '../controllers/IResponse'
 
-type IMiddleware = (controller: IController) => (request: IRequest) => Promise<IResponse>
+type IMiddleware = (request: IRequest) => Promise<any | BaseError>
 
 export default IMiddleware

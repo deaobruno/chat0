@@ -5,11 +5,30 @@ import IController from '../../../adapters/controllers/IController'
 import InternalServerError from '../../../application/errors/InternalServerError'
 import NotFoundError from '../../../application/errors/NotFoundError'
 import BaseError from '../../../application/errors/BaseError'
+import IMiddleware from '../../../adapters/middlewares/IMiddleware'
 
 export default (port: string | number) => {
   const app = express()
   const expressRouter = Router()
-  const handleRequest = (controller: IController) =>
+  const handleMiddleware = (middleware: IMiddleware) =>
+    async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const { headers, body, params, query } = req
+        const result = await middleware({
+          headers,
+          payload: { ...body, ...params, ...query },
+        })
+
+        if (result && result.statusCode && result.statusCode >= 400) return next(result)
+
+        req.body = { ...req.body, ...result }
+
+        next()
+      } catch (error) {
+        next(error)
+      }
+    }
+  const handleController = (controller: IController) =>
     async (req: Request, res: Response, next: NextFunction) => {
       try {
         const { headers, body, params, query } = req
@@ -30,14 +49,30 @@ export default (port: string | number) => {
     }
   const server = createServer(app)
   const router = {
-    get: (url: string, controller: IController) =>
-      expressRouter.get(url, handleRequest(controller)),
-    post: (url: string, controller: IController) =>
-      expressRouter.post(url, handleRequest(controller)),
-    put: (url: string, controller: IController) =>
-      expressRouter.put(url, handleRequest(controller)),
-    delete: (url: string, controller: IController) =>
-      expressRouter.delete(url, handleRequest(controller)),
+    get: (url: string, ...handlers: [...IMiddleware[], IController]) =>
+      expressRouter.get(
+        url,
+        handlers.slice(0, -1).map(middleware => handleMiddleware(<IMiddleware>middleware)),
+        handleController(<IController>handlers.pop()),
+      ),
+    post: (url: string, ...handlers: [...IMiddleware[], IController]) =>
+      expressRouter.post(
+        url,
+        handlers.slice(0, -1).map(middleware => handleMiddleware(<IMiddleware>middleware)),
+        handleController(<IController>handlers.pop()),
+      ),
+    put: (url: string, ...handlers: [...IMiddleware[], IController]) =>
+      expressRouter.put(
+        url,
+        handlers.slice(0, -1).map(middleware => handleMiddleware(<IMiddleware>middleware)),
+        handleController(<IController>handlers.pop()),
+      ),
+    delete: (url: string, ...handlers: [...IMiddleware[], IController]) =>
+      expressRouter.delete(
+        url,
+        handlers.slice(0, -1).map(middleware => handleMiddleware(<IMiddleware>middleware)),
+        handleController(<IController>handlers.pop()),
+      ),
   }
 
   app.use(json())

@@ -1,8 +1,6 @@
 import UnauthorizedError from '../../application/errors/UnauthorizedError'
 import IRequest from '../controllers/IRequest'
-import IResponse from '../controllers/IResponse'
 import User from '../../domain/entities/user/User'
-import IController from '../controllers/IController'
 import IAuthenticateUseCase from '../../application/useCases/auth/IAuthenticateUseCase'
 import BaseError from '../../application/errors/BaseError'
 
@@ -13,8 +11,7 @@ type Payload = {
 }
 
 export default (authenticateUseCase: IAuthenticateUseCase) => 
-  (controller: IController) =>
-  async (request: IRequest<Payload>): Promise<IResponse> => {
+  async (request: IRequest<Payload>): Promise<any | BaseError> => {
     const { authorization } = request.headers
 
     if (!authorization)
@@ -23,9 +20,7 @@ export default (authenticateUseCase: IAuthenticateUseCase) =>
     const userOrError = await authenticateUseCase(authorization)
     const { statusCode } = userOrError as BaseError
 
-    if (statusCode) return userOrError as BaseError
+    if (statusCode) return userOrError
 
-    request.payload.user = userOrError as User
-
-    return controller(request)
+    return { user: userOrError }
   }
