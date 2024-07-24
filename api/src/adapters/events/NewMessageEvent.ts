@@ -10,4 +10,4 @@ type Input = {
 }
 
 export default (createMessageUseCase: ICreateMessageUseCase): IEvent<Input> =>
-  (input: Input) => createMessageUseCase(input)
+  createMessageUseCase
