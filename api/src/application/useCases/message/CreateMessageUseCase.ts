@@ -13,16 +13,8 @@ type UseCaseConfig = {
   messageRepo: IMessageRepo
 }
 
-type Input = {
-  roomId: string
-  userId: string
-  author: string
-  text: string
-  time: string
-}
-
 export default (config: UseCaseConfig): ICreateMessageUseCase =>
-  async (input: Input): Promise<void> => {
+  async input => {
     const {
       hash,
       roomRepo,

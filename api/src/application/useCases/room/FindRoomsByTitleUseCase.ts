@@ -1,23 +1,13 @@
 import IFindRoomsByTitleUseCase from './IFindRoomsByTitleUseCase'
-import Room from '../../../domain/entities/room/Room'
 import IRoomRepo from '../../../adapters/repositories/IRoomRepo'
-import BaseError from '../../errors/BaseError'
 import BadRequestError from '../../errors/BadRequestError'
 
 type UseCaseConfig = {
   roomRepo: IRoomRepo
 }
 
-type Input = {
-  title: string
-}
-
-type Output = {
-  rooms: Room[]
-}
-
 export default (config: UseCaseConfig): IFindRoomsByTitleUseCase =>
-  async (input: Input): Promise<Output | BaseError> => {
+  async input => {
     const { roomRepo } = config
     const { title } = input
 

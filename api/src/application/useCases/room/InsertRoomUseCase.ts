@@ -1,13 +1,11 @@
 import IInsertRoomUseCase from './IInsertRoomUseCase'
 import IHash from '../../../infra/drivers/hash/IHash'
-import User from '../../../domain/entities/user/User'
 import RoomType from '../../../domain/entities/room/RoomType'
 import RoomStatus from '../../../domain/entities/room/RoomStatus'
 import UserRoomLevel from '../../../domain/entities/userRoom/UserRoomLevel'
 import UserRoomStatus from '../../../domain/entities/userRoom/UserRoomStatus'
 import IRoomRepo from '../../../adapters/repositories/IRoomRepo'
 import IUserRoomRepo from '../../../adapters/repositories/IUserRoomRepo'
-import BaseError from '../../errors/BaseError'
 import BadRequestError from '../../errors/BadRequestError'
 
 type UseCaseConfig = {
@@ -16,15 +14,8 @@ type UseCaseConfig = {
   userRoomRepo: IUserRoomRepo
 }
 
-type Input = {
-  user: User
-  title: string
-  description: string
-  type: string
-}
-
 export default (config: UseCaseConfig): IInsertRoomUseCase =>
-  async (input: Input): Promise<void | BaseError> => {
+  async input => {
     const { hash, roomRepo, userRoomRepo } = config
     const { user, title, description, type } = input
 

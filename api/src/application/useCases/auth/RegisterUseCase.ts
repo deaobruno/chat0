@@ -2,7 +2,6 @@ import IRegisterUseCase from './IRegisterUseCase'
 import IHash from '../../../infra/drivers/hash/IHash'
 import IEncryption from '../../../infra/drivers/encryption/IEncryption'
 import IUserRepo from '../../../adapters/repositories/IUserRepo'
-import BaseError from '../../errors/BaseError'
 import BadRequestError from '../../errors/BadRequestError'
 import ConflictError from '../../errors/ConflictError'
 
@@ -12,18 +11,8 @@ type UseCaseConfig = {
   userRepo: IUserRepo
 }
 
-type Input = {
-  email: string
-  username: string
-  password: string
-}
-
-type Output = {
-  url: string
-}
-
 export default (config: UseCaseConfig): IRegisterUseCase =>
-  async (input: Input): Promise<Output | BaseError> => {
+  async input => {
     const { hash, encryption, userRepo } = config
     const { email, username, password } = input
   

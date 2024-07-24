@@ -1,23 +1,13 @@
 import ILogoutUseCase from './ILogoutUseCase'
 import IUserRepo from '../../../adapters/repositories/IUserRepo'
-import User from '../../../domain/entities/user/User'
-import BaseError from '../../errors/BaseError'
 import UnauthorizedError from '../../errors/UnauthorizedError'
 
 type UseCaseConfig = {
   userRepo: IUserRepo
 }
 
-type Input = {
-  user: User
-}
-
-type Output = {
-  url: string
-}
-
 export default (config: UseCaseConfig): ILogoutUseCase =>
-  async (input: Input): Promise<Output | BaseError> => {
+  async input => {
     const { userRepo } = config
     const { user } = input
     const { userId } = user

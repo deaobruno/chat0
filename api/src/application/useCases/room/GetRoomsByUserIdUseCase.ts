@@ -11,7 +11,7 @@ type UseCaseConfig = {
 }
 
 export default (config: UseCaseConfig): IGetRoomsByUserIdUseCase =>
-  async (userId: string): Promise<Room[]> => {
+  async userId => {
     const { userRoomRepo, roomRepo, messageRepo } = config
     const userRooms = await userRoomRepo.findByUserId(userId)
     const rooms: Room[] = []

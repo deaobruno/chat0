@@ -1,6 +1,4 @@
 import IEncryption from '../../../infra/drivers/encryption/IEncryption'
-import User from '../../../domain/entities/user/User'
-import BaseError from '../../errors/BaseError'
 import UnauthorizedError from '../../errors/UnauthorizedError'
 import IUserRepo from '../../../adapters/repositories/IUserRepo'
 import IAuthenticateUseCase from './IAuthenticateUseCase'
@@ -10,12 +8,8 @@ type UseCaseConfig = {
   userRepo: IUserRepo
 }
 
-type Output = {
-  user: User
-}
-
 export default (config: UseCaseConfig): IAuthenticateUseCase =>
-  async (authentication: string): Promise<Output | BaseError> => {
+  async authentication => {
     if (!authentication)
       return UnauthorizedError('header["Authorization"] is missing')
 

@@ -1,7 +1,6 @@
 import ILoginUseCase from './ILoginUseCase'
 import IEncryption from '../../../infra/drivers/encryption/IEncryption'
 import IUserRepo from '../../../adapters/repositories/IUserRepo'
-import BaseError from '../../errors/BaseError'
 import BadRequestError from '../../errors/BadRequestError'
 import UnauthorizedError from '../../errors/UnauthorizedError'
 
@@ -10,17 +9,8 @@ type UseCaseConfig = {
   userRepo: IUserRepo
 }
 
-type Input = {
-  username: string
-  password: string
-}
-
-type Output = {
-  url: string
-}
-
 export default (config: UseCaseConfig): ILoginUseCase =>
-  async (input: Input): Promise<Output | BaseError> => {
+  async input => {
     const { encryption, userRepo } = config
     const { username, password } = input
 

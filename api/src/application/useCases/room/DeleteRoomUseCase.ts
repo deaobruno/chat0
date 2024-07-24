@@ -1,9 +1,7 @@
 import IJoinRoomUseCase from './IJoinRoomUseCase'
-import User from '../../../domain/entities/user/User'
 import IRoomRepo from '../../../adapters/repositories/IRoomRepo'
 import IUserRoomRepo from '../../../adapters/repositories/IUserRoomRepo'
 import IMessageRepo from '../../../adapters/repositories/IMessageRepo'
-import BaseError from '../../errors/BaseError'
 import BadRequestError from '../../errors/BadRequestError'
 import NotFoundError from '../../errors/NotFoundError'
 import ForbiddenError from '../../errors/ForbiddenError'
@@ -14,13 +12,8 @@ type UseCaseConfig = {
   messageRepo: IMessageRepo
 }
 
-type Input = {
-  user: User
-  roomId: string
-}
-
 export default (config: UseCaseConfig): IJoinRoomUseCase =>
-  async (input: Input): Promise<void | BaseError> => {
+  async input => {
     const { roomRepo, userRoomRepo, messageRepo } = config
     const { user: { userId }, roomId } = input
     const room = await roomRepo.findOneByRoomId(roomId)
