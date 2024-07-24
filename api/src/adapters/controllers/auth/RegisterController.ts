@@ -1,24 +1,11 @@
 import IRegisterUseCase from '../../../application/useCases/auth/IRegisterUseCase'
-import IRequest from '../IRequest'
-import IResponse from '../IResponse'
-import BaseError from '../../../application/errors/BaseError'
 
-type Payload = {
-  email: string
-  username: string
-  password: string
-}
+export default (registerUseCase: IRegisterUseCase) => {
+  const statusCode = 201
+  const handle = registerUseCase
 
-export default (registerUseCase: IRegisterUseCase) =>
-  async (request: IRequest<Payload>): Promise<IResponse> => {
-    const { payload } = request
-    const result = await registerUseCase(payload)
-    const { statusCode } = result as BaseError
-
-    if (statusCode) return result as BaseError
-
-    return {
-      statusCode: 201,
-      data: result,
-    }
+  return {
+    statusCode,
+    handle,
   }
+}

@@ -1,3 +1,3 @@
-type IUseCase<T = undefined, U = void> = (input: T) => U
+type IUseCase<Input = any, Output = any> = (input: Input) => Output
 
 export default IUseCase

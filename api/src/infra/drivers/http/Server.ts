@@ -19,7 +19,7 @@ export default (port: string | number) => {
           payload: { ...body, ...params, ...query },
         })
 
-        if (result && result.statusCode && result.statusCode >= 400) return next(result)
+        if (result && result.statusCode) return next(result)
 
         req.body = { ...req.body, ...result }
 
@@ -31,18 +31,15 @@ export default (port: string | number) => {
   const handleController = (controller: IController) =>
     async (req: Request, res: Response, next: NextFunction) => {
       try {
-        const { headers, body, params, query } = req
-        const response = await controller({
-          headers,
-          payload: { ...body, ...params, ...query },
-        })
-        const { statusCode, data } = response
+        const { body, params, query } = req
+        const { statusCode, handle } = controller
+        const response = await handle({ ...body, ...params, ...query })
 
-        if (statusCode >= 400) return next(response)
+        if (response.statusCode) return next(response)
 
         res
           .status(statusCode)
-          .json(data ?? { message: STATUS_CODES[statusCode] })
+          .json(response ?? { message: STATUS_CODES[statusCode] })
       } catch (error) {
         next(error)
       }

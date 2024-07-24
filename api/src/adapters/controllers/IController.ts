@@ -1,8 +1,8 @@
-import IRequest from './IRequest'
-import IResponse from './IResponse'
+import IUseCase from '../../application/useCases/IUseCase'
 
-type IController<Payload = any, Response = any> = 
-  (request: IRequest<Payload>) => 
-    IResponse<Response> | Promise<IResponse<Response>>
+type IController = {
+  statusCode: number
+  handle: IUseCase
+}
 
 export default IController

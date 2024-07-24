@@ -39,7 +39,7 @@ export default (config: SocketConfig) => {
   
       if (statusCode) return next(userOrError as BaseError)
 
-      socket.data.user = userOrError
+      socket.data = { ...socket.data, ...userOrError }
 
       next()
     })

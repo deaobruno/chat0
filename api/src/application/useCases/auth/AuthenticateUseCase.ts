@@ -10,8 +10,15 @@ type UseCaseConfig = {
   userRepo: IUserRepo
 }
 
+type Output = {
+  user: User
+}
+
 export default (config: UseCaseConfig): IAuthenticateUseCase =>
-  async (authentication: string): Promise<User | BaseError> => {
+  async (authentication: string): Promise<Output | BaseError> => {
+    if (!authentication)
+      return UnauthorizedError('header["Authorization"] is missing')
+
     const { userRepo, encryption } = config
     const [type, base64] = authentication.split(' ')
 
@@ -31,5 +38,5 @@ export default (config: UseCaseConfig): IAuthenticateUseCase =>
       return UnauthorizedError()
     if (!user.isLogged) return UnauthorizedError('User not logged')
 
-    return user
+    return { user }
   }
