@@ -10,11 +10,12 @@ export default (config: UseCaseConfig): ILogoutUseCase =>
   async input => {
     const { userRepo } = config
     const { user } = input
-    const { userId } = user
   
     if (!user.isLogged) return UnauthorizedError('User not logged')
 
-    await userRepo.update({ userId }, { isLogged: false })
+    user.isLogged = false
+
+    await userRepo.updateOne(user)
 
     return { url: '/' }
   }

@@ -7,6 +7,7 @@ import IUserRoomRepo from '../../../adapters/repositories/IUserRoomRepo'
 import BadRequestError from '../../errors/BadRequestError'
 import NotFoundError from '../../errors/NotFoundError'
 import ConflictError from '../../errors/ConflictError'
+import UserRoom from '../../../domain/entities/userRoom/UserRoom'
 
 type UseCaseConfig = {
   hash: IHash
@@ -28,13 +29,13 @@ export default (config: UseCaseConfig): IJoinRoomUseCase =>
 
     if (userInRoom) return ConflictError('User already in room')
 
-    const userRoomId = hash.generateUuid()
+    const userRoom = new UserRoom()
 
-    await userRoomRepo.insert({
-      userRoomId,
-      userId,
-      roomId,
-      level: UserRoomLevel.USER,
-      status: UserRoomStatus.OK,
-    })
+    userRoom.userRoomId = hash.generateUuid()
+    userRoom.userId = userId
+    userRoom.roomId = roomId
+    userRoom.level = UserRoomLevel.USER
+    userRoom.status = UserRoomStatus.OK
+
+    await userRoomRepo.create(userRoom)
   }

@@ -1,6 +1,6 @@
-import { Document, Filter, UpdateFilter } from 'mongodb'
+import { Document, UpdateFilter } from 'mongodb'
 
-type IDb<Entity> = {
+type IDb<Entity = any> = {
   start: () => Promise<void>
   stop: () => Promise<void>
   create: (

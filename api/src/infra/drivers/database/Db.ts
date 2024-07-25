@@ -15,7 +15,7 @@ type DbConfig = {
   database: string
 }
 
-export default (config: DbConfig): IDb<User> => {
+export default (config: DbConfig): IDb => {
   const { host, port, username, password, database } = config
   const db = new DataSource({
     type: 'mongodb',
@@ -53,7 +53,7 @@ export default (config: DbConfig): IDb<User> => {
         throw Error('Entity not found')
     }
   }
-  const getRepository = (entity: EntityTarget<User>) => {
+  const getRepository = (entity: EntityTarget<any>) => {
     return db.getMongoRepository(entity)
   }
   const create = async (
@@ -61,7 +61,8 @@ export default (config: DbConfig): IDb<User> => {
     data: Document,
     options?: InsertOneOptions,
   ) => {
-    await getRepository(getEntity(collection)).insertOne(data, options)
+    await getRepository(getEntity(collection))
+      .insertOne(data, options)
   }
   const find = async (
     collection: string,
@@ -73,10 +74,12 @@ export default (config: DbConfig): IDb<User> => {
     options.limit = limit;
     options.skip = (options.skip ?? 0) * limit
 
-    return getRepository(getEntity(collection)).find({ where, ...options })
+    return getRepository(getEntity(collection))
+      .find({ where, ...options })
   }
   const findOne = async (collection: string, where?: Filter<Document>) => {
-    return getRepository(getEntity(collection)).findOne({ where })
+    return getRepository(getEntity(collection))
+      .findOne({ where })
   }
   const updateOne = async (
     collection: string,
@@ -84,7 +87,8 @@ export default (config: DbConfig): IDb<User> => {
     filters: Filter<Document>,
     options?: UpdateOptions,
   ) => {
-    await getRepository(getEntity(collection)).updateOne(filters, data, options)
+    await getRepository(getEntity(collection))
+      .updateOne(filters, { $set: data }, options)
   }
   const updateMany = async (
     collection: string,
@@ -92,21 +96,24 @@ export default (config: DbConfig): IDb<User> => {
     filters: Filter<Document>,
     options?: UpdateOptions,
   ) => {
-    await getRepository(getEntity(collection)).updateMany(filters, data, options)
+    await getRepository(getEntity(collection))
+      .updateMany(filters, { $set: data }, options)
   }
   const deleteOne = async (
     collection: string,
     filters: Filter<Document>,
     options?: DeleteOptions,
   ) => {
-    await getRepository(getEntity(collection)).deleteOne(filters,options)
+    await getRepository(getEntity(collection))
+      .deleteOne(filters,options)
   }
   const deleteMany = async (
     collection: string,
     filters: Filter<Document>,
     options?: DeleteOptions,
   ) => {
-    await getRepository(getEntity(collection)).deleteMany(filters,options)
+    await getRepository(getEntity(collection))
+      .deleteMany(filters,options)
   }
 
   return {

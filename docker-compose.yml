@@ -27,6 +27,10 @@ services:
       - MONGO_DB_HOST=mongo
       - MONGO_DB_PORT=27017
       - MONGO_DB_DATABASE=chat0
+      - USER_SOURCE=user
+      - ROOM_SOURCE=room
+      - USER_ROOM_SOURCE=user_room
+      - MESSAGE_SOURCE=message
 
   mongo:
     image: mongo

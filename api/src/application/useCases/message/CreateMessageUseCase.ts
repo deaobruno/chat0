@@ -5,6 +5,7 @@ import IUserRoomRepo from '../../../adapters/repositories/IUserRoomRepo'
 import IMessageRepo from '../../../adapters/repositories/IMessageRepo'
 import MessageType from '../../../domain/entities/message/MessageType'
 import MessageStatus from '../../../domain/entities/message/MessageStatus'
+import Message from '../../../domain/entities/message/Message'
 
 type UseCaseConfig = {
   hash: IHash
@@ -33,14 +34,16 @@ export default (config: UseCaseConfig): ICreateMessageUseCase =>
     if (!userRoom) return
     if (!userRoom.isOk) return
 
-    await messageRepo.insert({
-      messageId: hash.generateUuid(),
-      roomId,
-      userId,
-      author,
-      text,
-      time: new Date(time),
-      type: MessageType.TEXT,
-      status: MessageStatus.SENT,
-    })
+    const message = new Message()
+
+    message.messageId = hash.generateUuid()
+    message.roomId = roomId
+    message.userId = userId
+    message.author = author
+    message.text = text
+    message.time = new Date(time)
+    message.type = MessageType.TEXT
+    message.status = MessageStatus.SENT
+
+    await messageRepo.create(message)
   }

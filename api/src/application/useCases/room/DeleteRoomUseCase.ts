@@ -27,7 +27,7 @@ export default (config: UseCaseConfig): IJoinRoomUseCase =>
     if (!userInRoom.isAdmin || !userInRoom.isOk)
       return ForbiddenError('User lacks privilege')
 
-    await messageRepo.delete({ roomId })
-    await userRoomRepo.delete({ roomId })
-    await roomRepo.delete({ roomId })
+    await messageRepo.deleteMany({ roomId })
+    await userRoomRepo.deleteMany({ roomId })
+    await roomRepo.deleteOne(room)
   }

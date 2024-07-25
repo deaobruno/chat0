@@ -4,6 +4,7 @@ import IEncryption from '../../../infra/drivers/encryption/IEncryption'
 import IUserRepo from '../../../adapters/repositories/IUserRepo'
 import BadRequestError from '../../errors/BadRequestError'
 import ConflictError from '../../errors/ConflictError'
+import User from '../../../domain/entities/user/User'
 
 type UseCaseConfig = {
   hash: IHash
@@ -28,15 +29,15 @@ export default (config: UseCaseConfig): IRegisterUseCase =>
   
     if (userByUsername) return ConflictError('"username" already in use')
   
-    const userId = hash.generateUuid()
+    const user = new User()
+    
+    user.userId = hash.generateUuid()
+    user.email = email
+    user.username = username
+    user.password = await encryption.encrypt(password, 10)
+    user.isLogged = true
   
-    await userRepo.insert({
-      userId,
-      email,
-      username,
-      password: await encryption.encrypt(password, 10),
-      isLogged: true
-    })
+    await userRepo.create(user)
 
     return { url: '/users/rooms' }
   }

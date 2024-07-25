@@ -24,9 +24,9 @@ export default (config: UseCaseConfig): ILoginUseCase =>
       return UnauthorizedError()
     if (user.isLogged) return UnauthorizedError('User already logged')
 
-    const { userId } = user
+    user.isLogged = true
 
-    await userRepo.update({ userId }, { isLogged: true })
+    await userRepo.updateOne(user)
 
     return { url: '/users/rooms' }
   }

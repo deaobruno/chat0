@@ -7,6 +7,8 @@ import UserRoomStatus from '../../../domain/entities/userRoom/UserRoomStatus'
 import IRoomRepo from '../../../adapters/repositories/IRoomRepo'
 import IUserRoomRepo from '../../../adapters/repositories/IUserRoomRepo'
 import BadRequestError from '../../errors/BadRequestError'
+import Room from '../../../domain/entities/room/Room'
+import UserRoom from '../../../domain/entities/userRoom/UserRoom'
 
 type UseCaseConfig = {
   hash: IHash
@@ -28,22 +30,23 @@ export default (config: UseCaseConfig): IInsertRoomUseCase =>
 
     const { userId } = user
     const roomId = hash.generateUuid()
+    const room = new Room()
+    
+    room.roomId = roomId
+    room.title = title
+    room.description = description
+    room.type = RoomType[type as keyof typeof RoomType]
+    room.status = RoomStatus.ACTIVE
 
-    await roomRepo.insert({
-      roomId,
-      title,
-      description,
-      type: RoomType[type as keyof typeof RoomType],
-      status: RoomStatus.ACTIVE,
-    })
+    await roomRepo.create(room)
 
-    const userRoomId = hash.generateUuid()
+    const userRoom = new UserRoom()
 
-    await userRoomRepo.insert({
-      userRoomId,
-      userId,
-      roomId,
-      level: UserRoomLevel.ADMIN,
-      status: UserRoomStatus.OK,
-    })  
+    userRoom.userRoomId = hash.generateUuid()
+    userRoom.userId = userId
+    userRoom.roomId = roomId
+    userRoom.level = UserRoomLevel.ADMIN
+    userRoom.status = UserRoomStatus.OK
+
+    await userRoomRepo.create(userRoom)
   }

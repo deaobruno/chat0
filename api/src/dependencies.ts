@@ -33,15 +33,14 @@ import NewMessageEvent from './adapters/events/NewMessageEvent'
 
 // Drivers
 const dbDriver = Db(config.db.mongo)
-const { db } = dbDriver
 const hash = Crypto()
 const encryption = Bcrypt()
 const events = Events()
 // Repositories
-const userRepo = UserRepo(db)
-const roomRepo = RoomRepo(db)
-const userRoomRepo = UserRoomRepo(db)
-const messageRepo = MessageRepo(db)
+const userRepo = UserRepo(dbDriver, config.db.sources.user)
+const roomRepo = RoomRepo(dbDriver, config.db.sources.room)
+const userRoomRepo = UserRoomRepo(dbDriver, config.db.sources.userRoom)
+const messageRepo = MessageRepo(dbDriver, config.db.sources.message)
 // Use Cases
 const registerUseCase = RegisterUseCase({
   hash,
