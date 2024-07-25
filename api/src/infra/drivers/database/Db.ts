@@ -1,10 +1,11 @@
 import 'reflect-metadata'
 import { Document } from 'mongodb'
-import { DataSource, DeleteOptions, EntityTarget, Filter, FindOptions, InsertOneOptions, ObjectLiteral, UpdateFilter, UpdateOptions } from 'typeorm'
+import { DataSource, DeleteOptions, EntityTarget, Filter, FindOptions, InsertOneOptions, UpdateFilter, UpdateOptions } from 'typeorm'
 import User from '../../../domain/entities/user/User'
 import Room from '../../../domain/entities/room/Room'
 import UserRoom from '../../../domain/entities/userRoom/UserRoom'
 import Message from '../../../domain/entities/message/Message'
+import IDb from './IDb'
 
 type DbConfig = {
   host: string
@@ -14,7 +15,7 @@ type DbConfig = {
   database: string
 }
 
-export default (config: DbConfig) => {
+export default (config: DbConfig): IDb<User> => {
   const { host, port, username, password, database } = config
   const db = new DataSource({
     type: 'mongodb',
@@ -30,7 +31,9 @@ export default (config: DbConfig) => {
     migrations: [],
     subscribers: [],
   })
-  const start = async () => db.initialize()
+  const start = async () => {
+    await db.initialize()
+  }
   const stop = async () => db.destroy()
   const getEntity = (collection: string) => {
     switch (collection) {
@@ -50,7 +53,7 @@ export default (config: DbConfig) => {
         throw Error('Entity not found')
     }
   }
-  const getRepository = (entity: EntityTarget<ObjectLiteral>) => {
+  const getRepository = (entity: EntityTarget<User>) => {
     return db.getMongoRepository(entity)
   }
   const create = async (
@@ -58,7 +61,7 @@ export default (config: DbConfig) => {
     data: Document,
     options?: InsertOneOptions,
   ) => {
-    return getRepository(getEntity(collection)).insertOne(data, options)
+    await getRepository(getEntity(collection)).insertOne(data, options)
   }
   const find = async (
     collection: string,
@@ -81,7 +84,7 @@ export default (config: DbConfig) => {
     filters: Filter<Document>,
     options?: UpdateOptions,
   ) => {
-    return getRepository(getEntity(collection)).updateOne(filters, data, options)
+    await getRepository(getEntity(collection)).updateOne(filters, data, options)
   }
   const updateMany = async (
     collection: string,
@@ -89,25 +92,24 @@ export default (config: DbConfig) => {
     filters: Filter<Document>,
     options?: UpdateOptions,
   ) => {
-    return getRepository(getEntity(collection)).updateMany(filters, data, options)
+    await getRepository(getEntity(collection)).updateMany(filters, data, options)
   }
   const deleteOne = async (
     collection: string,
     filters: Filter<Document>,
     options?: DeleteOptions,
   ) => {
-    return getRepository(getEntity(collection)).deleteOne(filters,options)
+    await getRepository(getEntity(collection)).deleteOne(filters,options)
   }
   const deleteMany = async (
     collection: string,
     filters: Filter<Document>,
     options?: DeleteOptions,
   ) => {
-    return getRepository(getEntity(collection)).deleteMany(filters,options)
+    await getRepository(getEntity(collection)).deleteMany(filters,options)
   }
 
   return {
-    db,
     start,
     stop,
     create,
