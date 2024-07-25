@@ -1,5 +1,6 @@
 import 'reflect-metadata'
-import { DataSource } from 'typeorm'
+import { Document } from 'mongodb'
+import { DataSource, DeleteOptions, EntityTarget, Filter, FindOptions, InsertOneOptions, ObjectLiteral, UpdateFilter, UpdateOptions } from 'typeorm'
 import User from '../../../domain/entities/user/User'
 import Room from '../../../domain/entities/room/Room'
 import UserRoom from '../../../domain/entities/userRoom/UserRoom'
@@ -31,10 +32,90 @@ export default (config: DbConfig) => {
   })
   const start = async () => db.initialize()
   const stop = async () => db.destroy()
+  const getEntity = (collection: string) => {
+    switch (collection) {
+      case 'user':
+        return User
+
+      case 'room':
+        return Room
+
+      case 'user_room':
+        return UserRoom
+
+      case 'message':
+        return Message
+    
+      default:
+        throw Error('Entity not found')
+    }
+  }
+  const getRepository = (entity: EntityTarget<ObjectLiteral>) => {
+    return db.getMongoRepository(entity)
+  }
+  const create = async (
+    collection: string,
+    data: Document,
+    options?: InsertOneOptions,
+  ) => {
+    return getRepository(getEntity(collection)).insertOne(data, options)
+  }
+  const find = async (
+    collection: string,
+    where?: Filter<Document>,
+    options: FindOptions = {},
+  ) => {
+    const limit = options.limit ?? 10
+
+    options.limit = limit;
+    options.skip = (options.skip ?? 0) * limit
+
+    return getRepository(getEntity(collection)).find({ where, ...options })
+  }
+  const findOne = async (collection: string, where?: Filter<Document>) => {
+    return getRepository(getEntity(collection)).findOne({ where })
+  }
+  const updateOne = async (
+    collection: string,
+    data: UpdateFilter<Document>,
+    filters: Filter<Document>,
+    options?: UpdateOptions,
+  ) => {
+    return getRepository(getEntity(collection)).updateOne(filters, data, options)
+  }
+  const updateMany = async (
+    collection: string,
+    data: UpdateFilter<Document>,
+    filters: Filter<Document>,
+    options?: UpdateOptions,
+  ) => {
+    return getRepository(getEntity(collection)).updateMany(filters, data, options)
+  }
+  const deleteOne = async (
+    collection: string,
+    filters: Filter<Document>,
+    options?: DeleteOptions,
+  ) => {
+    return getRepository(getEntity(collection)).deleteOne(filters,options)
+  }
+  const deleteMany = async (
+    collection: string,
+    filters: Filter<Document>,
+    options?: DeleteOptions,
+  ) => {
+    return getRepository(getEntity(collection)).deleteMany(filters,options)
+  }
 
   return {
     db,
     start,
     stop,
+    create,
+    find,
+    findOne,
+    updateOne,
+    updateMany,
+    deleteOne,
+    deleteMany,
   }
 }
