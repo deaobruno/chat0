@@ -35,7 +35,7 @@ export default (port: string | number) => {
         const { statusCode, handle } = controller
         const response = await handle({ ...body, ...params, ...query })
 
-        if (response.statusCode) return next(response)
+        if (response && response.statusCode) return next(response)
 
         res
           .status(statusCode)
