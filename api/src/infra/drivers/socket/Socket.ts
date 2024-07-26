@@ -62,11 +62,13 @@ export default (config: SocketConfig) => {
             rooms.forEach(room => socket.join(room.roomId))
             socket.emit('updateRooms', rooms)
           })
+
+        console.log(`[Socket] New socket connected: ${socket.id}`)
       } catch (error) {
         io.close(() => console.log(`[Socket] ${error}`))
       }
     })
-    .on('close', () => console.log('[Socket] Ended connection'))
+    .on('disconnect', () => console.log('[Socket] Ended connection'))
 
     console.log('[Socket] Started connection')
   }

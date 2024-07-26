@@ -1,7 +1,7 @@
 import crypto from 'node:crypto'
 
 export default () => {
-  const generateUuid = (): string => crypto.randomUUID()
+  const generateUuid = crypto.randomUUID
 
   return {
     generateUuid,
