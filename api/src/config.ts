@@ -1,7 +1,3 @@
-import { config } from 'dotenv-safe'
-
-config()
-
 export default {
   http: {
     port: `${process.env.HTTP_PORT}`,
@@ -17,6 +13,6 @@ export default {
       room: `${process.env.ROOM_SOURCE}`,
       userRoom: `${process.env.USER_ROOM_SOURCE}`,
       message: `${process.env.MESSAGE_SOURCE}`,
-    }
+    },
   },
 }

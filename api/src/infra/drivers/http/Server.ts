@@ -9,6 +9,7 @@ import IMiddleware from '../../../adapters/middlewares/IMiddleware'
 
 export default (port: string | number) => {
   const app = express()
+  const server = createServer(app)
   const expressRouter = Router()
   const handleMiddleware = (middleware: IMiddleware) =>
     async (req: Request, res: Response, next: NextFunction) => {
@@ -44,7 +45,6 @@ export default (port: string | number) => {
         next(error)
       }
     }
-  const server = createServer(app)
   const router = {
     get: (url: string, ...handlers: [...IMiddleware[], IController]) =>
       expressRouter.get(
@@ -84,26 +84,28 @@ export default (port: string | number) => {
     res: Response,
     next: NextFunction,
   ): void => {
-    const { statusCode, message } = error;
+    const { statusCode, message } = error
 
     if (!statusCode)
       error = InternalServerError(
         !message || message === '' ? undefined : message,
-      );
+      )
 
     console.log({
       method: req.method.toLowerCase(),
       url: req.url,
       error,
-    });
+    })
 
-    res.status(error.statusCode).send({ error: error.message });
+    res
+      .status(error.statusCode)
+      .send({ error: error.message })
   })
 
   const start = () => {
-    const httpServer = server
+    server
       .listen(port, () => {
-        const serverAddress = httpServer.address()
+        const serverAddress = server.address()
         let address = 'localhost'
 
         if (
