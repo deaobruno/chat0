@@ -4,7 +4,7 @@ on: pull_request
 
 jobs:
   ci-api:
-    runs-on: ubuntu:latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - name: Installing Nodejs
@@ -18,7 +18,7 @@ jobs:
           npm run build
           npm test
   ci-web:
-    runs-on: ubuntu:latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - name: Installing Nodejs
