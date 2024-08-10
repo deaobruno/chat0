@@ -1,0 +1,135 @@
+html, body {
+  height: 100%;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+#top {
+  height: 10%;
+  width: 100%;
+  padding: 12.5px 100px;
+}
+
+button {
+  width: 50px;
+  height: 50px;
+  font-size: 14px;
+  background: #069;
+  text-align: center;
+  line-height: 50px;
+  color: #FFF;
+  cursor: pointer;
+}
+
+#top_center {
+  height: 100%;
+  width: 80%;
+  float: left;
+}
+
+#search_room_title {
+  height: 100%;
+  width: 90%;
+  padding: 0 20px;
+}
+
+#top_right {
+  height: 100%;
+  width: 20%;
+  float: left;
+}
+
+#top_right button {
+  margin: 0 7.5px;
+}
+
+#new_room {
+  float: left;
+  line-height: 20px;
+}
+
+#logout {
+  float: right;
+}
+
+#middle {
+  height: 80%;
+  width: 100%;
+}
+
+#left {
+  height: 100%;
+  width: 20%;
+  float: left;
+}
+
+#right {
+  height: 100%;
+  width: 80%;
+  float: left;
+}
+
+#bottom {
+  height: 10%;
+  width: 100%;
+}
+
+#create_room {
+  cursor: pointer;
+}
+
+#rooms {
+  display: none;
+  cursor: pointer;
+}
+
+#active_room_top {
+  height: 10%;
+  width: 100%;
+  padding: 10px;
+}
+
+#active_room_image {
+  height: 100%;
+  width: 5%;
+  float: left;
+}
+
+#active_room_title {
+  height: 100%;
+  width: 85%;
+  float: left;
+}
+
+#leave_active_room, #delete_active_room {
+  display: none;
+  height: 100%;
+  width: 5%;
+  float: left;
+}
+
+#messages {
+  height: 75%;
+  width: 100%;
+  padding: 20px;
+}
+
+#new_message {
+  height: 15%;
+  width: 100%;
+  padding: 15px 75px;
+}
+
+#username {
+  display: none;
+}
+
+#text {
+  width: 85%;
+  height: 100%;
+  padding: 0 20px;
+}

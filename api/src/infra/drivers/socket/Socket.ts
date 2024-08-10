@@ -1,0 +1,74 @@
+import { Server } from 'node:http'
+import socketIo from 'socket.io'
+import IEvents from '../events/IEvents'
+import IGetRoomsByUserIdUseCase from '../../../application/useCases/room/IGetRoomsByUserIdUseCase'
+import IAuthenticateUseCase from '../../../application/useCases/auth/IAuthenticateUseCase'
+import BaseError from '../../../application/errors/BaseError'
+
+type SocketConfig = {
+  server: Server
+  events: IEvents
+  authenticateUseCase: IAuthenticateUseCase
+  getRoomsByUserIdUseCase: IGetRoomsByUserIdUseCase
+}
+
+type Message = {
+  text: string
+  time: string
+  roomId: string
+}
+
+export default (config: SocketConfig) => {
+  const {
+    server,
+    events,
+    authenticateUseCase,
+    getRoomsByUserIdUseCase,
+  } = config
+  const io = new socketIo.Server(server, { cors: { origin: 'http://localhost:8081' }})
+
+  io
+    .use(async (socket, next) => {
+      const { token } = socket.handshake.auth
+
+      if (!token)
+        return next(Error('[Socket] Authentication is missing'))
+
+      const userOrError = await authenticateUseCase(token)
+      const { statusCode } = userOrError as BaseError
+  
+      if (statusCode) return next(userOrError as BaseError)
+
+      socket.data = { ...socket.data, ...userOrError }
+
+      next()
+    })
+    .on('connection', async socket => {
+      try {
+        const { userId, username } = socket.data.user
+
+        socket
+          .on('newMessage', (message: Message) => {
+            const { roomId, text, time } = message
+            events.publish(
+              'newMessage',
+              { roomId, userId, author: username, text, time }
+            )
+            socket.to(message.roomId).emit('receivedMessage', message)
+          })
+          .on('getRoomsUpdate', async () => {
+            const rooms = await getRoomsByUserIdUseCase(userId)
+
+            rooms.forEach(room => socket.join(room.roomId))
+            socket.emit('updateRooms', rooms)
+          })
+
+        console.log(`[Socket] New socket connected: ${socket.id}`)
+      } catch (error) {
+        io.close(() => console.log(`[Socket] ${error}`))
+      }
+    })
+    .on('disconnect', () => console.log('[Socket] Ended connection'))
+
+    console.log('[Socket] Started connection')
+  }

@@ -1,0 +1,45 @@
+services:
+  web:
+    container_name: web
+    build:
+      context: ./web
+    restart: always
+    ports:
+      - 8081:8081
+    volumes:
+      - /usr/web/node_modules
+    environment:
+      - HTTP_PORT=8081
+
+  api:
+    container_name: api
+    build:
+      context: ./api
+    restart: always
+    ports:
+      - 8082:8082
+    depends_on:
+      - mongo
+    volumes:
+      - /usr/api/node_modules
+    environment:
+      - HTTP_PORT=8082
+      - MONGO_DB_HOST=mongo
+      - MONGO_DB_PORT=27017
+      - MONGO_DB_DATABASE=chat0
+      - USER_SOURCE=user
+      - ROOM_SOURCE=room
+      - USER_ROOM_SOURCE=user_room
+      - MESSAGE_SOURCE=message
+
+  mongo:
+    container_name: mongo
+    image: mongo
+    restart: always
+    ports:
+      - 27017:27017
+    volumes:
+      - mongo:/data/db
+
+volumes:
+  mongo:
