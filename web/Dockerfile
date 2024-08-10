@@ -1,7 +1,7 @@
 FROM node:20-alpine AS build
 WORKDIR /usr/web
 COPY . .
-RUN npm install --progress=false && \
+RUN npm install --no-progress && \
   npm run build && \
   rm -rf src/ tsconfig.json
 

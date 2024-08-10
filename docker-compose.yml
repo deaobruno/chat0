@@ -33,6 +33,7 @@ services:
       - MESSAGE_SOURCE=message
 
   mongo:
+    container_name: mongo
     image: mongo
     restart: always
     ports:

@@ -4,9 +4,10 @@
    "description": "Chat0 web frontend",
    "main": "dist/app.js",
    "scripts": {
-      "build": "rm -rf dist/ && tsc",
+      "build": "CI=false && rm -rf dist/ && tsc",
       "start": "node -r dotenv-safe/config dist/app.js",
-      "dev": "nodemon -r dotenv-safe/config src/app.ts"
+      "dev": "nodemon -r dotenv-safe/config src/app.ts",
+      "test": ""
    },
    "keywords": [],
    "author": "Bruno Oliveira",

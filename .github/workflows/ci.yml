@@ -1,0 +1,33 @@
+name: Continuou Integration
+
+on: pull_request
+
+jobs:
+  ci-api:
+    runs-on: ubuntu:latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Installing Nodejs
+        uses: actions/setup-node@v2
+        with:
+          node-version: 20.x
+      - name: Install, build and test application
+        run: |
+          cd ./api
+          npm install
+          npm run build
+          npm test
+  ci-web:
+    runs-on: ubuntu:latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Installing Nodejs
+        uses: actions/setup-node@v2
+        with:
+          node-version: 20.x
+      - name: Install, build and test application
+        run: |
+          cd ./web
+          npm install
+          npm run build
+          npm test
